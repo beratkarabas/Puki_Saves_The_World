@@ -1,0 +1,2729 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Doğa Koruyucuları: Dünyayı Kurtar</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    :root {
+      --primary-green: #2ecc71;
+      --dark-green: #27ae60;
+      --sky-blue: #3498db;
+      --wood-brown: #d35400;
+      --sun-yellow: #f1c40f;
+      --font-scale: 1;
+    }
+
+    body {
+      font-family: 'Fredoka', 'Quicksand', 'Nunito', 'Segoe UI', system-ui, sans-serif;
+      background: radial-gradient(circle at center, #2c3e50 0%, #1a252f 100%);
+      color: #2c3e50;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      font-size: calc(16px * var(--font-scale));
+    }
+
+    #game-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      max-width: 1440px;
+      max-height: 810px;
+      aspect-ratio: 16 / 9;
+      background: #000;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      border-radius: 14px;
+    }
+
+    @media (max-width: 900px) {
+      #game-container {
+        border-radius: 0;
+      }
+    }
+
+    .screen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: none;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      z-index: 10;
+    }
+
+    .screen.active {
+      display: flex;
+      opacity: 1;
+    }
+
+    .btn {
+      cursor: pointer;
+      border: none;
+      outline: none;
+      font-family: inherit;
+      font-weight: bold;
+      border-radius: 50px;
+      padding: 12px 28px;
+      font-size: 1.15rem;
+      transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 6px 0 rgba(0, 0, 0, 0.2), 0 10px 20px rgba(0, 0, 0, 0.15);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 9px 0 rgba(0, 0, 0, 0.2), 0 15px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn:active {
+      transform: translateY(3px);
+      box-shadow: 0 2px 0 rgba(0, 0, 0, 0.2), 0 5px 10px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-green {
+      background: linear-gradient(135deg, #2ecc71, #27ae60);
+      color: #fff;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+    }
+
+    .btn-blue {
+      background: linear-gradient(135deg, #3498db, #2980b9);
+      color: #fff;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+    }
+
+    .btn-orange {
+      background: linear-gradient(135deg, #e67e22, #d35400);
+      color: #fff;
+    }
+
+    .btn-yellow {
+      background: linear-gradient(135deg, #f1c40f, #f39c12);
+      color: #2c3e50;
+    }
+
+    .btn-icon {
+      width: 48px;
+      height: 48px;
+      padding: 0;
+      border-radius: 50%;
+      font-size: 1.4rem;
+    }
+
+    /* INTRO SCREEN */
+    #screen-intro {
+      background: linear-gradient(135deg, #134e5e 0%, #71b280 100%);
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .intro-card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 28px;
+      padding: 30px 40px;
+      max-width: 820px;
+      width: 90%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.3), inset 0 0 0 4px #71b280;
+      position: relative;
+      animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .mascot-avatar-container {
+      width: 170px;
+      height: 170px;
+      margin-top: -85px;
+      margin-bottom: 12px;
+      background: #fff;
+      border-radius: 50%;
+      padding: 8px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2), 0 0 0 5px #2ecc71;
+      position: relative;
+    }
+
+    .mascot-avatar {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));
+      transition: all 0.3s ease;
+    }
+
+    .intro-name-tag {
+      background: #27ae60;
+      color: #fff;
+      font-weight: 800;
+      padding: 5px 20px;
+      border-radius: 20px;
+      font-size: 1.15rem;
+      margin-bottom: 15px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    }
+
+    .intro-speech-box {
+      background: #f8fafc;
+      border: 3px solid #e2e8f0;
+      border-radius: 20px;
+      padding: 20px 25px;
+      width: 100%;
+      min-height: 110px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-size: 1.35rem;
+      font-weight: 600;
+      color: #1e293b;
+      line-height: 1.5;
+      margin-bottom: 25px;
+      position: relative;
+    }
+
+    .intro-nav {
+      display: flex;
+      justify-content: flex-end;
+      width: 100%;
+      gap: 15px;
+    }
+
+    /* MAIN MENU */
+    #screen-menu {
+      background: linear-gradient(135deg, #1b3a4b 0%, #2e6f40 100%);
+      flex-direction: column;
+      position: relative;
+      padding: 15px 25px;
+    }
+
+    .menu-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      z-index: 20;
+    }
+
+    .menu-title-box {
+      text-align: center;
+      flex-grow: 1;
+    }
+
+    .menu-title {
+      font-size: 2.2rem;
+      color: #f1c40f;
+      text-shadow: 0 3px 6px rgba(0,0,0,0.6), 0 0 20px rgba(241, 196, 15, 0.4);
+      font-weight: 900;
+      letter-spacing: 0.5px;
+    }
+
+    .menu-subtitle {
+      color: #ecf0f1;
+      font-size: 1.05rem;
+      font-weight: 600;
+    }
+
+    .menu-mascot-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+      margin: 10px 0;
+      background: rgba(255, 255, 255, 0.92);
+      padding: 8px 24px;
+      border-radius: 50px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+      max-width: 750px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .menu-mascot-img {
+      width: 60px;
+      height: 60px;
+      object-fit: contain;
+    }
+
+    .menu-mascot-text {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #2c3e50;
+    }
+
+    .levels-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      width: 100%;
+      max-width: 1050px;
+      margin: auto;
+      flex-grow: 1;
+      align-content: center;
+      padding-bottom: 10px;
+    }
+
+    .level-card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      border: 4px solid transparent;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .level-card.unlocked:hover {
+      transform: translateY(-4px) scale(1.02);
+      border-color: #2ecc71;
+      box-shadow: 0 12px 30px rgba(46, 204, 113, 0.35);
+    }
+
+    .level-card.locked {
+      background: rgba(200, 214, 229, 0.85);
+      cursor: not-allowed;
+      opacity: 0.75;
+      filter: grayscale(0.6);
+    }
+
+    .level-card-thumb {
+      width: 80px;
+      height: 80px;
+      border-radius: 16px;
+      background: #dfe6e9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      overflow: hidden;
+      box-shadow: inset 0 2px 6px rgba(0,0,0,0.15);
+      position: relative;
+    }
+
+    .level-card-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .level-card-info {
+      flex-grow: 1;
+    }
+
+    .level-card-num {
+      font-size: 0.9rem;
+      font-weight: 800;
+      color: #27ae60;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .level-card-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #2c3e50;
+      margin: 3px 0;
+    }
+
+    .level-card-desc {
+      font-size: 0.92rem;
+      color: #7f8c8d;
+      font-weight: 600;
+    }
+
+    .level-badge-slot {
+      width: 65px;
+      height: 65px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .level-badge-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 4px 8px rgba(241, 196, 15, 0.5));
+      animation: floatBadge 3s ease-in-out infinite;
+    }
+
+    .lock-overlay {
+      position: absolute;
+      right: 20px;
+      font-size: 2rem;
+      opacity: 0.8;
+    }
+
+    /* GAMEPLAY */
+    #screen-game {
+      background: #000;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .game-top-bar {
+      position: absolute;
+      top: 10px;
+      left: 15px;
+      right: 15px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      z-index: 100;
+      pointer-events: none;
+    }
+
+    .top-left-controls, .top-right-controls {
+      display: flex;
+      gap: 8px;
+      pointer-events: auto;
+    }
+
+    .top-mascot-banner {
+      pointer-events: auto;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(255, 255, 255, 0.94);
+      padding: 6px 18px 6px 10px;
+      border-radius: 50px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.35);
+      border: 3px solid #2ecc71;
+      max-width: 65%;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .top-mascot-banner:hover {
+      transform: scale(1.02);
+    }
+
+    .top-mascot-img-wrap {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: #fff;
+      padding: 4px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    .top-mascot-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .top-mascot-speech {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #2c3e50;
+      line-height: 1.35;
+    }
+
+    #game-stage {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #1e272e;
+    }
+
+    .stage-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 1;
+    }
+
+    .stage-bg.bg-fade-out {
+      opacity: 0;
+    }
+
+    #interactive-layer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 10;
+      pointer-events: auto;
+    }
+
+    #fx-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 25;
+      pointer-events: none;
+    }
+
+    .inventory-tray {
+      position: absolute;
+      bottom: 15px;
+      right: 15px;
+      display: flex;
+      gap: 12px;
+      background: rgba(255, 255, 255, 0.94);
+      padding: 10px 14px;
+      border-radius: 24px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.35);
+      border: 3px solid #3498db;
+      z-index: 30;
+      animation: slideInUp 0.4s ease;
+    }
+
+    .inv-item {
+      width: 76px;
+      height: 76px;
+      background: #ecf0f1;
+      border: 3px dashed #bdc3c7;
+      border-radius: 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.2s ease;
+      padding: 4px;
+    }
+
+    .inv-item img {
+      width: 85%;
+      height: 85%;
+      object-fit: contain;
+      filter: drop-shadow(0 3px 6px rgba(0,0,0,0.15));
+    }
+
+    .inv-item.selected {
+      border: 4px solid #f1c40f;
+      background: #fff9db;
+      transform: scale(1.1) translateY(-6px);
+      box-shadow: 0 8px 20px rgba(241, 196, 15, 0.5);
+      animation: pulseSelection 1.5s infinite;
+    }
+
+    .inv-item-label {
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: #34495e;
+      position: absolute;
+      bottom: -18px;
+      white-space: nowrap;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 2px 6px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .target-spot {
+      position: absolute;
+      border: 3px dashed #f1c40f;
+      border-radius: 20px;
+      background: rgba(241, 196, 15, 0.25);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      animation: pulseTarget 2s infinite;
+      z-index: 15;
+    }
+
+    .target-spot:hover {
+      background: rgba(241, 196, 15, 0.45);
+      transform: scale(1.05);
+    }
+
+    .target-label {
+      background: rgba(0, 0, 0, 0.8);
+      color: #fff;
+      font-weight: 800;
+      font-size: 0.85rem;
+      padding: 4px 10px;
+      border-radius: 12px;
+      text-align: center;
+      pointer-events: none;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+
+    .game-item {
+      position: absolute;
+      cursor: pointer;
+      transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4));
+      z-index: 12;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .game-item:hover {
+      transform: scale(1.15) translateY(-4px);
+    }
+
+    .game-item.selected {
+      transform: scale(1.2) translateY(-8px);
+      filter: drop-shadow(0 0 15px #f1c40f) drop-shadow(0 4px 10px rgba(0,0,0,0.5));
+      animation: bounceItem 1s infinite alternate;
+    }
+
+    .game-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      pointer-events: none;
+    }
+
+    .placed-element {
+      position: absolute;
+      z-index: 14;
+      filter: drop-shadow(0 6px 12px rgba(0,0,0,0.4));
+      animation: placePop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .placed-element img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .pollution-meter-container {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 10px 18px;
+      border-radius: 20px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      z-index: 30;
+      border: 3px solid #e74c3c;
+    }
+
+    .pollution-meter-label {
+      font-weight: 800;
+      font-size: 0.95rem;
+      color: #2c3e50;
+    }
+
+    .pollution-bar-bg {
+      width: 180px;
+      height: 18px;
+      background: #ecf0f1;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 2px solid #bdc3c7;
+    }
+
+    .pollution-bar-fill {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, #2ecc71 0%, #f39c12 50%, #e74c3c 100%);
+      transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .smoke-cloud {
+      position: absolute;
+      opacity: 0.85;
+      pointer-events: none;
+      filter: drop-shadow(0 5px 15px rgba(0,0,0,0.25));
+      transition: opacity 0.8s ease, transform 0.8s ease;
+      z-index: 11;
+    }
+
+    .fire-sprite {
+      position: absolute;
+      cursor: pointer;
+      z-index: 16;
+      animation: flameWiggle 0.6s infinite alternate ease-in-out;
+      filter: drop-shadow(0 0 15px rgba(255, 100, 0, 0.8));
+    }
+
+    .fire-sprite:hover {
+      transform: scale(1.15);
+    }
+
+    .rain-cloud-sprite {
+      position: absolute;
+      cursor: pointer;
+      z-index: 22;
+      filter: drop-shadow(0 10px 20px rgba(0,0,0,0.4));
+      animation: floatCloud 3s infinite alternate ease-in-out;
+      transition: all 1s ease;
+    }
+
+    .rain-cloud-sprite:hover {
+      transform: scale(1.08);
+    }
+
+    .turtle-container {
+      position: absolute;
+      cursor: pointer;
+      z-index: 13;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: floatTurtle 3s infinite ease-in-out;
+      transition: transform 0.3s ease;
+    }
+
+    .modal-backdrop {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(5px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .modal-backdrop.active {
+      display: flex;
+      opacity: 1;
+    }
+
+    .modal-box {
+      background: #fff;
+      border-radius: 28px;
+      padding: 30px;
+      width: 90%;
+      max-width: 520px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .reward-box {
+      border: 5px solid #f1c40f;
+    }
+
+    .reward-preview-img {
+      width: 180px;
+      height: 180px;
+      object-fit: contain;
+      margin: 15px 0;
+      filter: drop-shadow(0 8px 25px rgba(241, 196, 15, 0.6));
+      animation: pulseReward 2s infinite ease-in-out;
+      cursor: pointer;
+    }
+
+    .reward-title {
+      font-size: 1.8rem;
+      font-weight: 900;
+      color: #27ae60;
+      margin-bottom: 8px;
+    }
+
+    .reward-desc {
+      font-size: 1.1rem;
+      color: #34495e;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+
+    .settings-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      margin: 12px 0;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #2c3e50;
+    }
+
+    .settings-row input[type="range"] {
+      width: 160px;
+      accent-color: #2ecc71;
+    }
+
+    #screen-finale {
+      background: radial-gradient(circle at center, #1a365d 0%, #0f172a 100%);
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .finale-card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 32px;
+      padding: 35px 45px;
+      max-width: 880px;
+      width: 92%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.5), inset 0 0 0 5px #f1c40f;
+      text-align: center;
+      animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .finale-badges-row {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin: 20px 0;
+      flex-wrap: wrap;
+    }
+
+    .finale-badge-item {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #fff 50%, #fef3c7 100%);
+      padding: 10px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2), 0 0 0 3px #f59e0b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: floatBadge 3s infinite ease-in-out;
+    }
+
+    .finale-badge-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.7); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes slideInUp {
+      0% { transform: translateY(40px); opacity: 0; }
+      100% { transform: translateY(0); opacity: 1; }
+    }
+
+    @keyframes pulseSelection {
+      0%, 100% { box-shadow: 0 8px 20px rgba(241, 196, 15, 0.5); }
+      50% { box-shadow: 0 8px 30px rgba(241, 196, 15, 0.9); }
+    }
+
+    @keyframes pulseTarget {
+      0%, 100% { transform: scale(1); border-color: #f1c40f; }
+      50% { transform: scale(1.04); border-color: #e67e22; }
+    }
+
+    @keyframes pulseReward {
+      0%, 100% { transform: scale(1) rotate(0deg); }
+      50% { transform: scale(1.1) rotate(3deg); }
+    }
+
+    @keyframes floatBadge {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    @keyframes floatTurtle {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-12px) rotate(2deg); }
+    }
+
+    @keyframes floatCloud {
+      0% { transform: translateY(0) translateX(0); }
+      100% { transform: translateY(-10px) translateX(15px); }
+    }
+
+    @keyframes flameWiggle {
+      0% { transform: scale(1) rotate(-3deg); }
+      100% { transform: scale(1.12) rotate(3deg); }
+    }
+
+    @keyframes bounceItem {
+      0% { transform: scale(1.2) translateY(-6px); }
+      100% { transform: scale(1.2) translateY(-14px); }
+    }
+
+    @keyframes placePop {
+      0% { transform: scale(0.2); opacity: 0; }
+      70% { transform: scale(1.15); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="game-container">
+    
+    <!-- INTRO SCREEN -->
+    <div id="screen-intro" class="screen active">
+      <div class="intro-card">
+        <div class="mascot-avatar-container">
+          <img id="intro-mascot-img" class="mascot-avatar" src="" alt="Puki">
+        </div>
+        <div class="intro-name-tag">Baykuş Puki</div>
+        <div id="intro-speech-box" class="intro-speech-box">Yükleniyor...</div>
+        <div class="intro-nav">
+          <button id="intro-next-btn" class="btn btn-green">
+            <span>İlerle</span> ➔
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN MENU -->
+    <div id="screen-menu" class="screen">
+      <div class="menu-header">
+        <button id="menu-settings-btn" class="btn btn-blue btn-icon" title="Ayarlar">⚙️</button>
+        <div class="menu-title-box">
+          <h1 class="menu-title">DOĞA KORUYUCULARI</h1>
+          <p class="menu-subtitle">🌍 Dünyayı Kurtarmak Senin Elinde!</p>
+        </div>
+        <button id="menu-sound-btn" class="btn btn-yellow btn-icon" title="Ses Aç/Kapat">🔊</button>
+      </div>
+
+      <div class="menu-mascot-bar">
+        <img id="menu-mascot-img" class="menu-mascot-img" src="" alt="Puki">
+        <span id="menu-mascot-text" class="menu-mascot-text">Bir seviye seç ve doğayı korumaya başla!</span>
+      </div>
+
+      <div class="levels-grid">
+        <div id="lvl-card-1" class="level-card unlocked" onclick="game.startLevel(1)">
+          <div class="level-card-thumb"><img id="lvl-thumb-1" src="" alt="Seviye 1"></div>
+          <div class="level-card-info">
+            <div class="level-card-num">1. SEVİYE</div>
+            <div class="level-card-title">Parkı Temizle</div>
+            <div class="level-card-desc">Atıkları uygun geri dönüşüm kutularına ayır.</div>
+          </div>
+          <div id="lvl-badge-1" class="level-badge-slot"></div>
+        </div>
+
+        <div id="lvl-card-2" class="level-card locked" onclick="game.startLevel(2)">
+          <div class="level-card-thumb"><img id="lvl-thumb-2" src="" alt="Seviye 2"></div>
+          <div class="level-card-info">
+            <div class="level-card-num">2. SEVİYE</div>
+            <div class="level-card-title">Denizleri Kurtar</div>
+            <div class="level-card-desc">Denizdeki çöpleri topla ve kaplumbağayı kurtar.</div>
+          </div>
+          <div id="lvl-badge-2" class="level-badge-slot"><span class="lock-overlay">🔒</span></div>
+        </div>
+
+        <div id="lvl-card-3" class="level-card locked" onclick="game.startLevel(3)">
+          <div class="level-card-thumb"><img id="lvl-thumb-3" src="" alt="Seviye 3"></div>
+          <div class="level-card-info">
+            <div class="level-card-num">3. SEVİYE</div>
+            <div class="level-card-title">Şehrin Havasını Temizle</div>
+            <div class="level-card-desc">Bacalara filtre tak, çatılara güneş paneli yerleştir.</div>
+          </div>
+          <div id="lvl-badge-3" class="level-badge-slot"><span class="lock-overlay">🔒</span></div>
+        </div>
+
+        <div id="lvl-card-4" class="level-card locked" onclick="game.startLevel(4)">
+          <div class="level-card-thumb"><img id="lvl-thumb-4" src="" alt="Seviye 4"></div>
+          <div class="level-card-info">
+            <div class="level-card-num">4. SEVİYE</div>
+            <div class="level-card-title">Orman Yangınını Söndür</div>
+            <div class="level-card-desc">Alevleri söndür, çöpleri temizle ve yeni fidanlar dik!</div>
+          </div>
+          <div id="lvl-badge-4" class="level-badge-slot"><span class="lock-overlay">🔒</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GAMEPLAY SCREEN -->
+    <div id="screen-game" class="screen">
+      <div class="game-top-bar">
+        <div class="top-left-controls">
+          <button id="game-settings-btn" class="btn btn-blue btn-icon" title="Ayarlar">⚙️</button>
+          <button id="game-menu-btn" class="btn btn-yellow btn-icon" title="Ana Menü">🏠</button>
+        </div>
+
+        <div id="game-mascot-banner" class="top-mascot-banner" onclick="game.repeatInstruction()">
+          <div class="top-mascot-img-wrap">
+            <img id="game-mascot-img" class="top-mascot-img" src="" alt="Puki">
+          </div>
+          <div id="game-mascot-speech" class="top-mascot-speech">Yükleniyor...</div>
+        </div>
+
+        <div class="top-right-controls">
+          <button id="game-sound-btn" class="btn btn-yellow btn-icon" title="Ses Aç/Kapat">🔊</button>
+        </div>
+      </div>
+
+      <div id="game-stage">
+        <img id="stage-bg-primary" class="stage-bg" src="" alt="Oyun Alanı">
+        <img id="stage-bg-secondary" class="stage-bg bg-fade-out" src="" alt="Yeni Alan">
+        <div id="interactive-layer"></div>
+        <canvas id="fx-canvas"></canvas>
+        <div id="inventory-tray" class="inventory-tray" style="display: none;"></div>
+        <div id="pollution-meter" class="pollution-meter-container" style="display: none;">
+          <span class="pollution-meter-label">🌫️ Hava Kirliliği:</span>
+          <div class="pollution-bar-bg">
+            <div id="pollution-fill" class="pollution-bar-fill"></div>
+          </div>
+          <span id="pollution-percent" style="font-weight: 800; font-size: 0.9rem;">%100</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- GRAND FINALE SCREEN -->
+    <div id="screen-finale" class="screen">
+      <div class="finale-card">
+        <div class="mascot-avatar-container">
+          <img id="finale-mascot-img" class="mascot-avatar" src="" alt="Puki">
+        </div>
+        <h2 style="font-size: 2.3rem; color: #f59e0b; font-weight: 900; margin-bottom: 8px;">
+          TEBRİKLER DOĞA KAHRAMANI! 🎉
+        </h2>
+        <div class="intro-speech-box" style="margin-bottom: 15px; font-size: 1.25rem;">
+          İnanılmaz bir iş başardın! Parkları temizledin, denizdeki kaplumbağayı kurtardın, şehrin havasını arındırdın ve yanan ormanı küllerinden yeniden yeşerttin! Tüm ödülleri gururla taşıyabilirsin!
+        </div>
+        <div class="finale-badges-row">
+          <div class="finale-badge-item"><img id="fin-badge-1" src="" alt="Rozet 1"></div>
+          <div class="finale-badge-item"><img id="fin-badge-2" src="" alt="Rozet 2"></div>
+          <div class="finale-badge-item"><img id="fin-badge-3" src="" alt="Rozet 3"></div>
+          <div class="finale-badge-item"><img id="fin-badge-4" src="" alt="Rozet 4"></div>
+        </div>
+        <button id="finale-menu-btn" class="btn btn-green" style="font-size: 1.3rem; padding: 14px 40px;">
+          🌍 Ana Menüye Dön
+        </button>
+      </div>
+    </div>
+
+    <!-- REWARD MODAL -->
+    <div id="reward-modal" class="modal-backdrop">
+      <div class="modal-box reward-box">
+        <h2 id="reward-modal-title" class="reward-title">SEVİYE TAMAMLANDI! 🏅</h2>
+        <p id="reward-modal-desc" class="reward-desc">Harika bir iş çıkardın!</p>
+        <img id="reward-modal-img" class="reward-preview-img" src="" alt="Ödül" onclick="game.claimCurrentReward()">
+        <p style="font-size: 0.95rem; color: #7f8c8d; margin-bottom: 15px;">Ödülü almak için üzerine tıkla!</p>
+        <button id="reward-claim-btn" class="btn btn-green" onclick="game.claimCurrentReward()">
+          Ödülü Al ve Devam Et ✨
+        </button>
+      </div>
+    </div>
+
+    <!-- SETTINGS MODAL -->
+    <div id="settings-modal" class="modal-backdrop">
+      <div class="modal-box">
+        <h2 style="font-size: 1.7rem; color: #2c3e50; font-weight: 800; margin-bottom: 20px;">⚙️ Ayarlar</h2>
+        <div class="settings-row">
+          <span>🎵 Müzik Sesi:</span>
+          <input type="range" id="vol-music" min="0" max="100" value="70">
+        </div>
+        <div class="settings-row">
+          <span>🔔 Ses Efektleri:</span>
+          <input type="range" id="vol-sfx" min="0" max="100" value="80">
+        </div>
+        <div class="settings-row">
+          <span>🔤 Yazı Boyutu:</span>
+          <div>
+            <button id="font-norm-btn" class="btn btn-blue" style="padding: 6px 14px; font-size: 0.9rem;">Normal</button>
+            <button id="font-large-btn" class="btn btn-yellow" style="padding: 6px 14px; font-size: 0.9rem;">Büyük</button>
+          </div>
+        </div>
+        <div style="margin-top: 25px; display: flex; gap: 15px; width: 100%;">
+          <button id="settings-to-menu-btn" class="btn btn-orange" style="flex: 1;">🏠 Ana Menü</button>
+          <button id="settings-close-btn" class="btn btn-green" style="flex: 1;">Kapat</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const EMBEDDED_ASSETS = {
+  "bg_lvl1_dark": "seviye_1/seviye_1_arkaplan_karanlik.jpg",
+  "bg_lvl1_normal": "seviye_1/seviye_1_arkaplan_normal.jpg",
+  "bg_lvl2_dirty": "seviye_2/seviye_2_arkaplan_kirli.jpg",
+  "bg_lvl2_clean": "seviye_2/seviye_2_arkaplan_temiz.jpg",
+  "bg_lvl3_dirty": "seviye_3/seviye_3_arkaplan_kirli.jpg",
+  "bg_lvl3_clean": "seviye_3/seviye_3_arkaplan_temiz.jpg",
+  "bg_lvl4_fire": "seviye_4/seviye_4_arkaplan_yaniyor.jpg",
+  "bg_lvl4_burned": "seviye_4/seviye_4_arkaplan_yanmis.jpg",
+  "bg_lvl4_normal": "seviye_4/seviye_4_arkaplan_normal.jpg"
+};
+
+function getAsset(path) {
+  if (typeof EMBEDDED_ASSETS !== 'undefined') {
+    if (EMBEDDED_ASSETS[path]) return EMBEDDED_ASSETS[path];
+    const baseName = path.split('/').pop();
+    if (EMBEDDED_ASSETS[baseName]) return EMBEDDED_ASSETS[baseName];
+  }
+  return path;
+}
+
+class SoundEngine {
+  constructor() {
+    this.ctx = null;
+    this.musicGain = null;
+    this.sfxGain = null;
+    this.ambientGain = null;
+    this.musicVol = 0.5;
+    this.sfxVol = 0.8;
+    this.ambientVol = 0.5;
+    this.muted = false;
+    this.musicTimer = null;
+    this.currentAmbient = 'none';
+    this.ambientNodes = [];
+  }
+
+  init() {
+    if (this.ctx) return;
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      this.ctx = new AudioCtx();
+      this.musicGain = this.ctx.createGain();
+      this.sfxGain = this.ctx.createGain();
+      this.ambientGain = this.ctx.createGain();
+      this.updateVolumes();
+      this.musicGain.connect(this.ctx.destination);
+      this.sfxGain.connect(this.ctx.destination);
+      this.ambientGain.connect(this.ctx.destination);
+      this.startMusicLoop();
+    } catch (e) {}
+  }
+
+  ensureContext() {
+    this.init();
+    if (this.ctx && this.ctx.state === 'suspended') {
+      this.ctx.resume();
+    }
+  }
+
+  updateVolumes() {
+    if (!this.ctx) return;
+    const now = this.ctx.currentTime;
+    const m = this.muted ? 0 : this.musicVol;
+    const s = this.muted ? 0 : this.sfxVol;
+    const a = this.muted ? 0 : this.ambientVol;
+    this.musicGain.gain.setValueAtTime(m * 0.3, now);
+    this.sfxGain.gain.setValueAtTime(s, now);
+    this.ambientGain.gain.setValueAtTime(a * 0.35, now);
+  }
+
+  toggleMute() {
+    this.ensureContext();
+    this.muted = !this.muted;
+    this.updateVolumes();
+    return this.muted;
+  }
+
+  setMusicVolume(v) {
+    this.musicVol = Math.max(0, Math.min(1, v));
+    this.updateVolumes();
+  }
+
+  setSfxVolume(v) {
+    this.sfxVol = Math.max(0, Math.min(1, v));
+    this.updateVolumes();
+  }
+
+  startMusicLoop() {
+    if (this.musicTimer) return;
+    const notes = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25, 587.33, 659.25, 783.99, 880.00];
+    const patterns = [
+      [0, 2, 4, 2, 3, 4, 5, 4],
+      [5, 4, 3, 2, 4, 3, 2, 0],
+      [1, 3, 5, 3, 2, 4, 6, 5],
+      [7, 5, 4, 3, 2, 1, 2, 0]
+    ];
+    let patIdx = 0;
+    let stepIdx = 0;
+
+    const playStep = () => {
+      if (!this.ctx || this.muted || this.musicVol <= 0.01) {
+        this.musicTimer = setTimeout(playStep, 240);
+        return;
+      }
+      try {
+        const pattern = patterns[patIdx];
+        const noteIdx = pattern[stepIdx % pattern.length];
+        const freq = notes[noteIdx % notes.length];
+
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+
+        const now = this.ctx.currentTime;
+        gain.gain.setValueAtTime(0.001, now);
+        gain.gain.linearRampToValueAtTime(0.2, now + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+
+        osc.connect(gain);
+        gain.connect(this.musicGain);
+
+        osc.start(now);
+        osc.stop(now + 0.24);
+
+        if (stepIdx % 4 === 0) {
+          const bassOsc = this.ctx.createOscillator();
+          const bassGain = this.ctx.createGain();
+          bassOsc.type = 'sine';
+          bassOsc.frequency.setValueAtTime(notes[pattern[0] % 5] * 0.5, now);
+          bassGain.gain.setValueAtTime(0.25, now);
+          bassGain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+          bassOsc.connect(bassGain);
+          bassGain.connect(this.musicGain);
+          bassOsc.start(now);
+          bassOsc.stop(now + 0.5);
+        }
+
+        stepIdx++;
+        if (stepIdx >= pattern.length) {
+          stepIdx = 0;
+          patIdx = (patIdx + 1) % patterns.length;
+        }
+      } catch (err) {}
+      this.musicTimer = setTimeout(playStep, 240);
+    };
+
+    this.musicTimer = setTimeout(playStep, 500);
+  }
+
+  playSfx(type) {
+    this.ensureContext();
+    if (!this.ctx || this.muted) return;
+    const now = this.ctx.currentTime;
+
+    try {
+      if (type === 'click') {
+        const osc = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(650, now);
+        osc.frequency.exponentialRampToValueAtTime(400, now + 0.06);
+        g.gain.setValueAtTime(0.3, now);
+        g.gain.linearRampToValueAtTime(0.001, now + 0.06);
+        osc.connect(g);
+        g.connect(this.sfxGain);
+        osc.start(now);
+        osc.stop(now + 0.07);
+      }
+      else if (type === 'correct') {
+        [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
+          const osc = this.ctx.createOscillator();
+          const g = this.ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, now + i * 0.08);
+          g.gain.setValueAtTime(0.001, now + i * 0.08);
+          g.gain.linearRampToValueAtTime(0.3, now + i * 0.08 + 0.02);
+          g.gain.exponentialRampToValueAtTime(0.001, now + i * 0.08 + 0.3);
+          osc.connect(g);
+          g.connect(this.sfxGain);
+          osc.start(now + i * 0.08);
+          osc.stop(now + i * 0.08 + 0.32);
+        });
+      }
+      else if (type === 'wrong') {
+        const osc = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(180, now);
+        osc.frequency.linearRampToValueAtTime(120, now + 0.2);
+        g.gain.setValueAtTime(0.2, now);
+        g.gain.linearRampToValueAtTime(0.001, now + 0.2);
+        osc.connect(g);
+        g.connect(this.sfxGain);
+        osc.start(now);
+        osc.stop(now + 0.22);
+      }
+      else if (type === 'magic') {
+        [523.25, 659.25, 783.99, 987.77, 1174.66, 1318.51, 1567.98].forEach((f, idx) => {
+          const osc = this.ctx.createOscillator();
+          const g = this.ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(f, now + idx * 0.06);
+          g.gain.setValueAtTime(0.01, now + idx * 0.06);
+          g.gain.linearRampToValueAtTime(0.25, now + idx * 0.06 + 0.02);
+          g.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.06 + 0.4);
+          osc.connect(g);
+          g.connect(this.sfxGain);
+          osc.start(now + idx * 0.06);
+          osc.stop(now + idx * 0.06 + 0.45);
+        });
+      }
+      else if (type === 'bubble') {
+        const osc = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(350, now);
+        osc.frequency.exponentialRampToValueAtTime(950, now + 0.12);
+        g.gain.setValueAtTime(0.35, now);
+        g.gain.linearRampToValueAtTime(0.001, now + 0.12);
+        osc.connect(g);
+        g.connect(this.sfxGain);
+        osc.start(now);
+        osc.stop(now + 0.13);
+      }
+      else if (type === 'snip') {
+        [0, 0.08].forEach(offset => {
+          const bufferSize = this.ctx.sampleRate * 0.04;
+          const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+          const data = buffer.getChannelData(0);
+          for (let i = 0; i < bufferSize; i++) data[i] = (Math.random() * 2 - 1) * 0.5;
+          const noise = this.ctx.createBufferSource();
+          noise.buffer = buffer;
+          const filter = this.ctx.createBiquadFilter();
+          filter.type = 'bandpass';
+          filter.frequency.value = 3500;
+          filter.Q.value = 3;
+          const g = this.ctx.createGain();
+          g.gain.setValueAtTime(0.4, now + offset);
+          g.gain.exponentialRampToValueAtTime(0.01, now + offset + 0.04);
+          noise.connect(filter);
+          filter.connect(g);
+          g.connect(this.sfxGain);
+          noise.start(now + offset);
+        });
+      }
+      else if (type === 'spray') {
+        const bufferSize = this.ctx.sampleRate * 0.35;
+        const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+        const noise = this.ctx.createBufferSource();
+        noise.buffer = buffer;
+        const filter = this.ctx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(2500, now);
+        filter.frequency.exponentialRampToValueAtTime(800, now + 0.35);
+        const g = this.ctx.createGain();
+        g.gain.setValueAtTime(0.4, now);
+        g.gain.linearRampToValueAtTime(0.01, now + 0.35);
+        noise.connect(filter);
+        filter.connect(g);
+        g.connect(this.sfxGain);
+        noise.start(now);
+      }
+      else if (type === 'plant') {
+        [330, 440, 554.37, 659.25].forEach((f, i) => {
+          const osc = this.ctx.createOscillator();
+          const g = this.ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(f, now + i * 0.05);
+          g.gain.setValueAtTime(0.2, now + i * 0.05);
+          g.exponentialRampToValueAtTime(0.001, now + i * 0.05 + 0.3);
+          osc.connect(g);
+          g.connect(this.sfxGain);
+          osc.start(now + i * 0.05);
+          osc.stop(now + i * 0.05 + 0.32);
+        });
+      }
+      else if (type === 'thunder') {
+        const bufferSize = this.ctx.sampleRate * 0.6;
+        const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+        const noise = this.ctx.createBufferSource();
+        noise.buffer = buffer;
+        const filter = this.ctx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(180, now);
+        filter.frequency.exponentialRampToValueAtTime(60, now + 0.6);
+        const g = this.ctx.createGain();
+        g.gain.setValueAtTime(0.5, now);
+        g.gain.exponentialRampToValueAtTime(0.01, now + 0.6);
+        noise.connect(filter);
+        filter.connect(g);
+        g.connect(this.sfxGain);
+        noise.start(now);
+      }
+      else if (type === 'fanfare') {
+        const notes = [
+          { f: 523.25, d: 0.15, t: 0 },
+          { f: 659.25, d: 0.15, t: 0.15 },
+          { f: 783.99, d: 0.2,  t: 0.3 },
+          { f: 659.25, d: 0.12, t: 0.52 },
+          { f: 1046.50, d: 0.5, t: 0.65 }
+        ];
+        notes.forEach(n => {
+          const osc = this.ctx.createOscillator();
+          const g = this.ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(n.f, now + n.t);
+          g.gain.setValueAtTime(0.001, now + n.t);
+          g.gain.linearRampToValueAtTime(0.35, now + n.t + 0.02);
+          g.gain.exponentialRampToValueAtTime(0.001, now + n.t + n.d);
+          osc.connect(g);
+          g.connect(this.sfxGain);
+          osc.start(now + n.t);
+          osc.stop(now + n.t + n.d + 0.05);
+        });
+      }
+    } catch (e) {}
+  }
+
+  startAmbient(type) {
+    this.ensureContext();
+    if (!this.ctx || this.currentAmbient === type) return;
+    this.stopAmbient();
+    this.currentAmbient = type;
+
+    try {
+      if (type === 'fire') {
+        const bufferSize = this.ctx.sampleRate * 2;
+        const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          data[i] = (Math.random() > 0.985 ? (Math.random() * 2 - 1) * 0.9 : (Math.random() * 2 - 1) * 0.08);
+        }
+        const noise = this.ctx.createBufferSource();
+        noise.buffer = buffer;
+        noise.loop = true;
+        const filter = this.ctx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.value = 800;
+        filter.Q.value = 1.2;
+        noise.connect(filter);
+        filter.connect(this.ambientGain);
+        noise.start();
+        this.ambientNodes = [noise, filter];
+      }
+      else if (type === 'rain') {
+        const bufferSize = this.ctx.sampleRate * 2;
+        const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+        const noise = this.ctx.createBufferSource();
+        noise.buffer = buffer;
+        noise.loop = true;
+        const filter = this.ctx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.value = 1200;
+        noise.connect(filter);
+        filter.connect(this.ambientGain);
+        noise.start();
+        this.ambientNodes = [noise, filter];
+      }
+      else if (type === 'ocean_waves') {
+        const bufferSize = this.ctx.sampleRate * 3;
+        const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+        const noise = this.ctx.createBufferSource();
+        noise.buffer = buffer;
+        noise.loop = true;
+        const filter = this.ctx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.value = 450;
+        noise.connect(filter);
+        filter.connect(this.ambientGain);
+        noise.start();
+        this.ambientNodes = [noise, filter];
+      }
+      else if (type === 'birds_breeze') {
+        const bufferSize = this.ctx.sampleRate * 2;
+        const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+        const noise = this.ctx.createBufferSource();
+        noise.buffer = buffer;
+        noise.loop = true;
+        const filter = this.ctx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.value = 350;
+        noise.connect(filter);
+        filter.connect(this.ambientGain);
+        noise.start();
+        this.ambientNodes = [noise, filter];
+      }
+    } catch (e) {}
+  }
+
+  stopAmbient() {
+    this.ambientNodes.forEach(node => {
+      try {
+        if (node.stop) node.stop();
+        if (node.disconnect) node.disconnect();
+      } catch (e) {}
+    });
+    this.ambientNodes = [];
+    this.currentAmbient = 'none';
+  }
+}
+
+class ParticleEngine {
+  constructor(canvas) {
+    this.canvas = canvas;
+    this.ctx = canvas.getContext('2d');
+    this.particles = [];
+    this.rainDrops = [];
+    this.isRaining = false;
+    this.resize();
+    window.addEventListener('resize', () => this.resize());
+    this.loop();
+  }
+
+  resize() {
+    if (!this.canvas) return;
+    this.canvas.width = this.canvas.parentElement.clientWidth;
+    this.canvas.height = this.canvas.parentElement.clientHeight;
+  }
+
+  loop() {
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+    for (let i = this.particles.length - 1; i >= 0; i--) {
+      const p = this.particles[i];
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += p.gravity || 0.1;
+      p.life -= p.decay;
+
+      this.ctx.save();
+      this.ctx.globalAlpha = Math.max(0, p.life);
+      this.ctx.fillStyle = p.color;
+
+      if (p.type === 'confetti') {
+        p.rotation = (p.rotation || 0) + (p.rotSpeed || 0.05);
+        this.ctx.translate(p.x, p.y);
+        this.ctx.rotate(p.rotation);
+        this.ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
+      } else {
+        this.ctx.beginPath();
+        this.ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        this.ctx.fill();
+      }
+      this.ctx.restore();
+
+      if (p.life <= 0) {
+        this.particles.splice(i, 1);
+      }
+    }
+
+    if (this.isRaining) {
+      if (this.rainDrops.length < 130) {
+        this.rainDrops.push({
+          x: Math.random() * this.canvas.width,
+          y: -20,
+          len: 15 + Math.random() * 20,
+          speed: 12 + Math.random() * 8
+        });
+      }
+      this.ctx.strokeStyle = '#a0e4f1';
+      this.ctx.lineWidth = 1.5;
+      for (let i = this.rainDrops.length - 1; i >= 0; i--) {
+        const r = this.rainDrops[i];
+        r.y += r.speed;
+        r.x += 1;
+        this.ctx.beginPath();
+        this.ctx.moveTo(r.x, r.y);
+        this.ctx.lineTo(r.x + 2, r.y + r.len);
+        this.ctx.stroke();
+
+        if (r.y > this.canvas.height) {
+          this.rainDrops.splice(i, 1);
+        }
+      }
+    }
+
+    requestAnimationFrame(() => this.loop());
+  }
+
+  spawnSparkles(x, y, count = 20, color = '#f1c40f') {
+    const colors = [color, '#ffffff', '#2ecc71', '#3498db'];
+    for (let i = 0; i < count; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const speed = 1.5 + Math.random() * 4.5;
+      this.particles.push({
+        x: x, y: y,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        gravity: 0.05,
+        decay: 0.015 + Math.random() * 0.02,
+        life: 1,
+        size: 3 + Math.random() * 5,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        type: 'sparkle'
+      });
+    }
+  }
+
+  spawnFoam(x, y, count = 15) {
+    for (let i = 0; i < count; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const speed = 1 + Math.random() * 3.5;
+      this.particles.push({
+        x: x, y: y,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed - 1,
+        gravity: 0.02,
+        decay: 0.025,
+        life: 1,
+        size: 5 + Math.random() * 7,
+        color: '#ffffff',
+        type: 'foam'
+      });
+    }
+  }
+
+  spawnConfetti(count = 70) {
+    const colors = ['#f1c40f', '#e74c3c', '#2ecc71', '#3498db', '#9b59b6', '#e67e22'];
+    for (let i = 0; i < count; i++) {
+      this.particles.push({
+        x: Math.random() * this.canvas.width,
+        y: -10,
+        vx: (Math.random() - 0.5) * 4,
+        vy: 2 + Math.random() * 4,
+        gravity: 0.08,
+        decay: 0.007,
+        life: 1,
+        size: 8 + Math.random() * 8,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        type: 'confetti',
+        rotation: Math.random() * Math.PI * 2,
+        rotSpeed: (Math.random() - 0.5) * 0.15
+      });
+    }
+  }
+
+  startRain() { this.isRaining = true; }
+  stopRain() { this.isRaining = false; this.rainDrops = []; }
+}
+
+class GameController {
+  constructor() {
+    this.sound = new SoundEngine();
+    this.fx = null;
+    this.unlockedLevels = 1;
+    this.rewardsWon = [false, false, false, false];
+    this.currentLevel = 1;
+    this.introStep = 0;
+
+    this.introDialogues = [
+      {
+        mood: 'baykus_normal.png',
+        text: "Merhaba küçük kahraman! Benim adım Puki. Sana doğamızdan çok önemli bir haber getirdim..."
+      },
+      {
+        mood: 'baykus_sad.png',
+        text: "Güzel dünyamız, yemyeşil ormanlarımız, masmavi denizlerimiz ve şehirlerimiz kirlilik yüzünden zor durumda..."
+      },
+      {
+        mood: 'baykus_fear.png',
+        text: "Çöpler etrafa saçılıyor, sevimli hayvan dostlarımız tehlikeye giriyor ve sıcak hava yüzünden orman yangınları çıkıyor!"
+      },
+      {
+        mood: 'baykus_happy.png',
+        text: "Ama henüz geç değil! Senin gibi duyarlı bir doğa koruyucusuyla her şeyi düzeltebiliriz. Birlikte dünyamızı kurtaralım mı?"
+      }
+    ];
+
+    this.mascotMoods = {
+      normal: 'maskot/baykus_normal.png',
+      happy: 'maskot/baykus_happy.png',
+      sad: 'maskot/baykus_sad.png',
+      fear: 'maskot/baykus_fear.png'
+    };
+
+    this.selectedTool = null;
+    this.selectedTrash = null;
+    this.lastInstruction = "";
+
+    this.init();
+  }
+
+  init() {
+    const canvas = document.getElementById('fx-canvas');
+    if (canvas) this.fx = new ParticleEngine(canvas);
+
+    try {
+      const savedUnlocked = localStorage.getItem('nature_heroes_unlocked');
+      if (savedUnlocked) this.unlockedLevels = Math.max(1, parseInt(savedUnlocked, 10));
+      const savedRewards = localStorage.getItem('nature_heroes_rewards');
+      if (savedRewards) this.rewardsWon = JSON.parse(savedRewards);
+    } catch (e) {}
+
+    this.setupEventListeners();
+    this.showIntroStep(0);
+    this.updateMenuUI();
+  }
+
+  saveProgress() {
+    try {
+      localStorage.setItem('nature_heroes_unlocked', this.unlockedLevels.toString());
+      localStorage.setItem('nature_heroes_rewards', JSON.stringify(this.rewardsWon));
+    } catch (e) {}
+    this.updateMenuUI();
+  }
+
+  setupEventListeners() {
+    document.addEventListener('pointerdown', () => this.sound.ensureContext(), { once: true });
+
+    document.getElementById('intro-next-btn').addEventListener('click', () => {
+      this.sound.playSfx('click');
+      this.introStep++;
+      if (this.introStep < this.introDialogues.length) {
+        this.showIntroStep(this.introStep);
+      } else {
+        this.showScreen('screen-menu');
+      }
+    });
+
+    ['menu-sound-btn', 'game-sound-btn'].forEach(id => {
+      const btn = document.getElementById(id);
+      if (btn) {
+        btn.addEventListener('click', () => {
+          const isMuted = this.sound.toggleMute();
+          btn.textContent = isMuted ? '🔇' : '🔊';
+        });
+      }
+    });
+
+    ['menu-settings-btn', 'game-settings-btn'].forEach(id => {
+      const btn = document.getElementById(id);
+      if (btn) {
+        btn.addEventListener('click', () => {
+          this.sound.playSfx('click');
+          this.openModal('settings-modal');
+        });
+      }
+    });
+
+    document.getElementById('settings-close-btn').addEventListener('click', () => {
+      this.sound.playSfx('click');
+      this.closeModal('settings-modal');
+    });
+
+    document.getElementById('settings-to-menu-btn').addEventListener('click', () => {
+      this.sound.playSfx('click');
+      this.closeModal('settings-modal');
+      this.showScreen('screen-menu');
+    });
+
+    document.getElementById('game-menu-btn').addEventListener('click', () => {
+      this.sound.playSfx('click');
+      this.showScreen('screen-menu');
+    });
+
+    document.getElementById('finale-menu-btn').addEventListener('click', () => {
+      this.sound.playSfx('click');
+      this.showScreen('screen-menu');
+    });
+
+    document.getElementById('vol-music').addEventListener('input', (e) => {
+      this.sound.setMusicVolume(e.target.value / 100);
+    });
+
+    document.getElementById('vol-sfx').addEventListener('input', (e) => {
+      this.sound.setSfxVolume(e.target.value / 100);
+    });
+
+    document.getElementById('font-norm-btn').addEventListener('click', () => {
+      document.documentElement.style.setProperty('--font-scale', '1');
+      this.sound.playSfx('click');
+    });
+    document.getElementById('font-large-btn').addEventListener('click', () => {
+      document.documentElement.style.setProperty('--font-scale', '1.2');
+      this.sound.playSfx('click');
+    });
+  }
+
+  showScreen(screenId) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    const target = document.getElementById(screenId);
+    if (target) target.classList.add('active');
+
+    if (screenId === 'screen-menu') {
+      this.sound.startAmbient('none');
+      this.updateMenuUI();
+    }
+  }
+
+  openModal(modalId) {
+    const m = document.getElementById(modalId);
+    if (m) m.classList.add('active');
+  }
+
+  closeModal(modalId) {
+    const m = document.getElementById(modalId);
+    if (m) m.classList.remove('active');
+  }
+
+  showIntroStep(step) {
+    const data = this.introDialogues[step];
+    if (!data) return;
+
+    document.getElementById('intro-mascot-img').src = getAsset(data.mood);
+    document.getElementById('intro-speech-box').textContent = data.text;
+
+    const nextBtn = document.getElementById('intro-next-btn');
+    if (step === this.introDialogues.length - 1) {
+      nextBtn.innerHTML = '<span>Maceraya Başla!</span> 🚀';
+      nextBtn.className = 'btn btn-yellow';
+    } else {
+      nextBtn.innerHTML = '<span>Geç</span> ➔';
+      nextBtn.className = 'btn btn-green';
+    }
+  }
+
+  updateMenuUI() {
+    document.getElementById('menu-mascot-img').src = getAsset(this.mascotMoods.happy);
+    document.getElementById('lvl-thumb-1').src = getAsset('bg_lvl1_normal');
+    document.getElementById('lvl-thumb-2').src = getAsset('bg_lvl2_clean');
+    document.getElementById('lvl-thumb-3').src = getAsset('bg_lvl3_clean');
+    document.getElementById('lvl-thumb-4').src = getAsset('bg_lvl4_normal');
+
+    for (let i = 1; i <= 4; i++) {
+      const card = document.getElementById(`lvl-card-${i}`);
+      const badgeSlot = document.getElementById(`lvl-badge-${i}`);
+      const isUnlocked = i <= this.unlockedLevels;
+      const isCompleted = this.rewardsWon[i - 1];
+
+      if (isUnlocked) {
+        card.classList.remove('locked');
+        card.classList.add('unlocked');
+      } else {
+        card.classList.remove('unlocked');
+        card.classList.add('locked');
+      }
+
+      badgeSlot.innerHTML = '';
+      if (isCompleted) {
+        const rewardImg = document.createElement('img');
+        rewardImg.className = 'level-badge-img';
+        rewardImg.src = getAsset(`seviye_${i}/${i}_seviye_odul.png`);
+        rewardImg.title = `${i}. Seviye Rozeti`;
+        badgeSlot.appendChild(rewardImg);
+      } else if (!isUnlocked) {
+        badgeSlot.innerHTML = '<span class="lock-overlay">🔒</span>';
+      }
+    }
+  }
+
+  setPuki(mood, speechText) {
+    const mascotImg = document.getElementById('game-mascot-img');
+    const speechEl = document.getElementById('game-mascot-speech');
+    const assetKey = this.mascotMoods[mood] || this.mascotMoods.normal;
+    mascotImg.src = getAsset(assetKey);
+    speechEl.textContent = speechText;
+    this.lastInstruction = speechText;
+  }
+
+  repeatInstruction() {
+    this.sound.playSfx('click');
+    const speechEl = document.getElementById('game-mascot-speech');
+    speechEl.style.transform = 'scale(1.05)';
+    setTimeout(() => { speechEl.style.transform = 'scale(1)'; }, 200);
+  }
+
+  startLevel(lvlNum) {
+    if (lvlNum > this.unlockedLevels) {
+      this.sound.playSfx('wrong');
+      return;
+    }
+    this.sound.playSfx('click');
+    this.currentLevel = lvlNum;
+    this.selectedTool = null;
+    this.selectedTrash = null;
+
+    const layer = document.getElementById('interactive-layer');
+    layer.innerHTML = '';
+    const tray = document.getElementById('inventory-tray');
+    tray.innerHTML = '';
+    tray.style.display = 'none';
+    document.getElementById('pollution-meter').style.display = 'none';
+
+    if (this.fx) this.fx.stopRain();
+
+    this.showScreen('screen-game');
+
+    if (lvlNum === 1) this.initLevel1();
+    else if (lvlNum === 2) this.initLevel2();
+    else if (lvlNum === 3) this.initLevel3();
+    else if (lvlNum === 4) this.initLevel4();
+  }
+
+  setStageBackground(bgKey, smoothTransition = false) {
+    const primary = document.getElementById('stage-bg-primary');
+    const secondary = document.getElementById('stage-bg-secondary');
+
+    if (!smoothTransition) {
+      primary.src = getAsset(bgKey);
+      primary.classList.remove('bg-fade-out');
+      secondary.classList.add('bg-fade-out');
+    } else {
+      secondary.src = getAsset(bgKey);
+      secondary.classList.remove('bg-fade-out');
+      primary.classList.add('bg-fade-out');
+
+      setTimeout(() => {
+        primary.src = getAsset(bgKey);
+        primary.classList.remove('bg-fade-out');
+        secondary.classList.add('bg-fade-out');
+      }, 1000);
+    }
+  }
+
+  showRewardModal(lvlNum) {
+    this.sound.stopAmbient();
+    this.sound.playSfx('fanfare');
+    if (this.fx) this.fx.spawnConfetti(60);
+
+    const titleEl = document.getElementById('reward-modal-title');
+    const descEl = document.getElementById('reward-modal-desc');
+    const imgEl = document.getElementById('reward-modal-img');
+
+    const titles = [
+      "1. SEVİYE PARK ROZETİ! 🏅",
+      "2. SEVİYE OKYANUS ROZETİ! 🐢",
+      "3. SEVİYE GÖKYÜZÜ ROZETİ! 🌤️",
+      "4. SEVİYE ORMAN KAHRAMANI! 🌲"
+    ];
+    const descs = [
+      "Harikasın! Parkı tertemiz yaptın ve doğaya yeniden hayat verdin!",
+      "Mükemmel! Denizdeki kaplumbağayı kurtardın ve suları arındırdın!",
+      "Tebrikler! Bacaları filtreledin ve şehre temiz hava kazandırdın!",
+      "İnanılmazsın! Yangını söndürdün ve ormanı yeniden yeşerttin!"
+    ];
+
+    titleEl.textContent = titles[lvlNum - 1];
+    descEl.textContent = descs[lvlNum - 1];
+    imgEl.src = getAsset(`seviye_${lvlNum}/${lvlNum}_seviye_odul.png`);
+
+    this.openModal('reward-modal');
+  }
+
+  claimCurrentReward() {
+    this.sound.playSfx('magic');
+    this.rewardsWon[this.currentLevel - 1] = true;
+    if (this.currentLevel === this.unlockedLevels && this.unlockedLevels < 4) {
+      this.unlockedLevels++;
+    }
+    this.saveProgress();
+    this.closeModal('reward-modal');
+
+    if (this.currentLevel === 4) {
+      this.showFinaleScreen();
+    } else {
+      this.showScreen('screen-menu');
+    }
+  }
+
+  showFinaleScreen() {
+    this.sound.playSfx('fanfare');
+    if (this.fx) this.fx.spawnConfetti(100);
+
+    document.getElementById('finale-mascot-img').src = getAsset(this.mascotMoods.happy);
+    for (let i = 1; i <= 4; i++) {
+      document.getElementById(`fin-badge-${i}`).src = getAsset(`seviye_${i}/${i}_seviye_odul.png`);
+    }
+    this.showScreen('screen-finale');
+  }
+
+  /* ========================================================
+     LEVEL 1: PARKI TEMIZLE
+     (Çöpler en baştan itibaren yerde mevcut!)
+     ======================================================== */
+  initLevel1() {
+    this.sound.startAmbient('birds_breeze');
+    this.setStageBackground('bg_lvl1_dark');
+    this.setPuki('sad', "Park çöplerle dolmuş ve çok karanlık! Doğayı temizlemek için önce sağ alttaki kutuları parka yerleştirmeliyiz.");
+
+    const layer = document.getElementById('interactive-layer');
+    const tray = document.getElementById('inventory-tray');
+    tray.style.display = 'flex';
+    tray.innerHTML = '';
+
+    let binsPlaced = false;
+
+    // 1) Ground Trash is placed IMMEDIATELY from the start of the level
+    const trashList = [
+      { id: 1, type: 'green', name: 'Muz Kabuğu', img: 'seviye_1/cop_muz.png', x: 12, y: 82, w: 70, h: 70 },
+      { id: 2, type: 'green', name: 'Elma Çöpü', img: 'seviye_1/elma_cop.png', x: 26, y: 85, w: 70, h: 70 },
+      { id: 3, type: 'blue',  name: 'Plastik Şişe', img: 'seviye_1/cop_plastik.png', x: 52, y: 76, w: 75, h: 75 },
+      { id: 4, type: 'blue',  name: 'Eski Gazete', img: 'seviye_1/cop_gazete.png', x: 62, y: 84, w: 80, h: 80 },
+      { id: 5, type: 'green', name: 'Muz Kabuğu', img: 'seviye_1/cop_muz.png', x: 74, y: 78, w: 70, h: 70 },
+      { id: 6, type: 'green', name: 'Elma Çöpü', img: 'seviye_1/elma_cop.png', x: 84, y: 84, w: 70, h: 70 },
+      { id: 7, type: 'blue',  name: 'Plastik Şişe', img: 'seviye_1/cop_plastik.png', x: 70, y: 88, w: 75, h: 75 },
+      { id: 8, type: 'blue',  name: 'Eski Gazete', img: 'seviye_1/cop_gazete.png', x: 88, y: 76, w: 80, h: 80 }
+    ];
+
+    let remainingTrash = trashList.length;
+
+    trashList.forEach(t => {
+      const item = document.createElement('div');
+      item.className = 'game-item';
+      item.id = `trash-${t.id}`;
+      item.style.left = `${t.x}%`;
+      item.style.top = `${t.y}%`;
+      item.style.width = `${t.w}px`;
+      item.style.height = `${t.h}px`;
+      item.innerHTML = `<img src="${getAsset(t.img)}" alt="${t.name}">`;
+
+      item.onclick = (e) => {
+        e.stopPropagation();
+        this.sound.playSfx('click');
+        if (!binsPlaced) {
+          this.setPuki('normal', 'Önce sağ alttaki kutuları parktaki belirteçlere yerleştirmeliyiz!');
+          return;
+        }
+        document.querySelectorAll('.game-item').forEach(el => el.classList.remove('selected'));
+        item.classList.add('selected');
+        this.selectedTrash = t;
+        this.setPuki('normal', `"${t.name}" seçildi! Şimdi hangi kutuya atacağını seç (Yeşil: Organik, Mavi: Geri Dönüşüm).`);
+      };
+
+      layer.appendChild(item);
+    });
+
+    // 2) Bins Placement
+    const binsToPlace = [
+      { id: 'green-bin', type: 'green', name: 'Organik', img: 'seviye_1/yesil_kutu.png', targetX: 22, targetY: 66, placed: false },
+      { id: 'blue-bin', type: 'blue', name: 'Geri Dönüşüm', img: 'seviye_1/mavi_kutu.png', targetX: 38, targetY: 66, placed: false }
+    ];
+
+    let selectedBin = null;
+
+    const renderTray = () => {
+      tray.innerHTML = '';
+      binsToPlace.forEach(b => {
+        if (!b.placed) {
+          const item = document.createElement('div');
+          item.className = `inv-item ${selectedBin === b ? 'selected' : ''}`;
+          item.innerHTML = `<img src="${getAsset(b.img)}" alt="${b.name}"><span class="inv-item-label">${b.name}</span>`;
+          item.onclick = () => {
+            this.sound.playSfx('click');
+            selectedBin = b;
+            renderTray();
+            this.setPuki('normal', `Şimdi parktaki belirtece tıklayarak ${b.name} kutusunu yerleştir!`);
+          };
+          tray.appendChild(item);
+        }
+      });
+    };
+    renderTray();
+
+    binsToPlace.forEach(b => {
+      const spot = document.createElement('div');
+      spot.className = 'target-spot';
+      spot.style.left = `${b.targetX}%`;
+      spot.style.top = `${b.targetY}%`;
+      spot.style.width = '100px';
+      spot.style.height = '110px';
+      spot.innerHTML = `<span class="target-label">${b.type === 'green' ? 'Yeşil Kutu 🌱' : 'Mavi Kutu ♻️'}</span>`;
+
+      spot.onclick = () => {
+        if (!selectedBin) {
+          this.sound.playSfx('wrong');
+          this.setPuki('normal', "Önce sağ alttan yerleştirmek istediğin kutuya tıkla!");
+          return;
+        }
+        if (selectedBin.type === b.type) {
+          this.sound.playSfx('correct');
+          if (this.fx) this.fx.spawnSparkles(spot.offsetLeft + 50, spot.offsetTop + 55, 20);
+          b.placed = true;
+          selectedBin = null;
+          spot.remove();
+
+          const placedBin = document.createElement('div');
+          placedBin.className = 'placed-element';
+          placedBin.id = `placed-${b.type}-bin`;
+          placedBin.style.left = `${b.targetX}%`;
+          placedBin.style.top = `${b.targetY}%`;
+          placedBin.style.width = '100px';
+          placedBin.style.height = '110px';
+          placedBin.style.cursor = 'pointer';
+          placedBin.innerHTML = `<img src="${getAsset(b.img)}" alt="${b.name}">`;
+
+          placedBin.onclick = () => {
+            if (this.selectedTrash) {
+              handleTrashDrop(this.selectedTrash, b.type);
+            }
+          };
+          layer.appendChild(placedBin);
+
+          renderTray();
+
+          if (binsToPlace.every(x => x.placed)) {
+            binsPlaced = true;
+            tray.style.display = 'none';
+            this.sound.playSfx('magic');
+            this.setPuki('happy', "Harika! Kutular yerleştirildi. Şimdi yerdeki çöpleri seçip doğru kutulara atabilirsin!");
+          }
+        } else {
+          this.sound.playSfx('wrong');
+          this.setPuki('normal', "Bu kutunun yeri burası değil, diğer belirtece yerleştirmeyi dene!");
+        }
+      };
+
+      layer.appendChild(spot);
+    });
+
+    const handleTrashDrop = (trash, binType) => {
+      if (trash.type === binType) {
+        this.sound.playSfx('correct');
+        const trashEl = document.getElementById(`trash-${trash.id}`);
+        const binEl = document.getElementById(`placed-${binType}-bin`);
+
+        if (this.fx && binEl) {
+          this.fx.spawnSparkles(binEl.offsetLeft + 50, binEl.offsetTop + 50, 15);
+        }
+
+        if (trashEl) {
+          trashEl.style.transition = 'all 0.4s ease';
+          trashEl.style.transform = 'scale(0.1) rotate(180deg)';
+          trashEl.style.opacity = '0';
+          setTimeout(() => trashEl.remove(), 400);
+        }
+
+        this.selectedTrash = null;
+        remainingTrash--;
+
+        if (binType === 'green') {
+          this.setPuki('happy', 'Doğru! Meyve ve sebze artıkları organiktir, yeşil kutuya atılır!');
+        } else {
+          this.setPuki('happy', 'Aferin! Plastik ve kağıt atıklar geri dönüştürülmek üzere mavi kutuya atılır!');
+        }
+
+        if (remainingTrash <= 0) {
+          setTimeout(() => {
+            this.sound.playSfx('magic');
+            this.setStageBackground('bg_lvl1_normal', true);
+            this.setPuki('happy', 'İnanılmazsın! Park tertemiz oldu, güneş parıldıyor! İşte ödülün!');
+            setTimeout(() => this.showRewardModal(1), 1200);
+          }, 600);
+        }
+      } else {
+        this.sound.playSfx('wrong');
+        if (trash.type === 'green') {
+          this.setPuki('normal', `Dikkat et dostum! ${trash.name} meyve artığıdır, organik yeşil kutuya atmalıyız.`);
+        } else {
+          this.setPuki('normal', `Dikkat et dostum! ${trash.name} geri dönüştürülebilir, mavi kutuya atmalıyız.`);
+        }
+      }
+    };
+  }
+
+  /* ========================================================
+     LEVEL 2: DENIZLERI KURTAR
+     (Çöpler tam denizin içinde, file efekti tamamen kaldırıldı)
+     ======================================================== */
+  initLevel2() {
+    this.sound.startAmbient('ocean_waves');
+    this.setStageBackground('bg_lvl2_dirty');
+    this.setPuki('sad', "Denizlerimiz kirlenmiş ve sevimli kaplumbağamız zor durumda! Önce denizdeki tüm çöpleri toplayalım.");
+
+    const layer = document.getElementById('interactive-layer');
+    const tray = document.getElementById('inventory-tray');
+    tray.style.display = 'none';
+    tray.innerHTML = '';
+
+    // Kaplumbağa: Sadece resim, üzerinde file efekti YOK!
+    const turtleWrap = document.createElement('div');
+    turtleWrap.className = 'turtle-container';
+    turtleWrap.id = 'turtle-wrapper';
+    turtleWrap.style.left = '45%';
+    turtleWrap.style.top = '48%';
+    turtleWrap.style.width = '130px';
+    turtleWrap.style.height = '130px';
+
+    const turtleImg = document.createElement('img');
+    turtleImg.id = 'turtle-img';
+    turtleImg.src = getAsset('seviye_2/uzgun_kaplumbaga.png');
+    turtleImg.style.width = '100%';
+    turtleImg.style.height = '100%';
+    turtleImg.style.objectFit = 'contain';
+
+    turtleWrap.appendChild(turtleImg);
+    layer.appendChild(turtleWrap);
+
+    // Çöpler: Kesinlikle işaretlenen kırmızı elips (deniz alanı) içerisinde!
+    // Kıyıya veya gökyüzüne taşmayan, su yüzeyindeki koordinatlar
+    const seaTrash = [
+      { id: 1, name: 'Plastik Bardak', img: 'seviye_2/atik_bardak.png', x: 14, y: 55, w: 70, h: 70 },
+      { id: 2, name: 'Plastik Poşet', img: 'seviye_2/atik_poset_cop.png', x: 25, y: 64, w: 75, h: 75 },
+      { id: 3, name: 'Plastik Şişe', img: 'seviye_2/cop_plastik.png', x: 33, y: 53, w: 65, h: 65 },
+      { id: 4, name: 'Plastik Bardak', img: 'seviye_2/atik_bardak.png', x: 62, y: 54, w: 70, h: 70 },
+      { id: 5, name: 'Plastik Poşet', img: 'seviye_2/atik_poset_cop.png', x: 72, y: 63, w: 75, h: 75 },
+      { id: 6, name: 'Plastik Şişe', img: 'seviye_2/cop_plastik.png', x: 84, y: 56, w: 65, h: 65 },
+      { id: 7, name: 'Plastik Bardak', img: 'seviye_2/atik_bardak.png', x: 22, y: 58, w: 70, h: 70 }
+    ];
+
+    let remainingSeaTrash = seaTrash.length;
+
+    seaTrash.forEach(t => {
+      const item = document.createElement('div');
+      item.className = 'game-item';
+      item.id = `sea-trash-${t.id}`;
+      item.style.left = `${t.x}%`;
+      item.style.top = `${t.y}%`;
+      item.style.width = `${t.w}px`;
+      item.style.height = `${t.h}px`;
+      item.innerHTML = `<img src="${getAsset(t.img)}" alt="${t.name}">`;
+
+      item.onclick = () => {
+        this.sound.playSfx('bubble');
+        if (this.fx) this.fx.spawnSparkles(item.offsetLeft + 35, item.offsetTop + 35, 15, '#3498db');
+
+        item.style.transition = 'all 0.35s ease';
+        item.style.transform = 'scale(0.1) rotate(180deg)';
+        item.style.opacity = '0';
+        setTimeout(() => item.remove(), 350);
+
+        remainingSeaTrash--;
+        this.setPuki('happy', `Harika! ${t.name} temizlendi. Kalan atık: ${remainingSeaTrash}`);
+
+        if (remainingSeaTrash <= 0) {
+          setTimeout(() => startTurtleRescuePhase(), 600);
+        }
+      };
+
+      layer.appendChild(item);
+    });
+
+    const startTurtleRescuePhase = () => {
+      this.sound.playSfx('magic');
+      this.setStageBackground('bg_lvl2_clean', true);
+      this.setPuki('happy', 'Deniz pırıl pırıl oldu! Kaplumbağayı kurtarmak için Kurtarma Makası kazandın!');
+
+      const scissorsCenter = document.createElement('div');
+      scissorsCenter.className = 'placed-element';
+      scissorsCenter.style.left = '45%';
+      scissorsCenter.style.top = '35%';
+      scissorsCenter.style.width = '140px';
+      scissorsCenter.style.height = '140px';
+      scissorsCenter.style.zIndex = '50';
+      scissorsCenter.innerHTML = `<img src="${getAsset('seviye_2/kurtarma_makas.png')}" alt="Makas">`;
+      layer.appendChild(scissorsCenter);
+
+      setTimeout(() => {
+        scissorsCenter.style.transition = 'all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+        scissorsCenter.style.transform = 'scale(0.5)';
+        scissorsCenter.style.left = '85%';
+        scissorsCenter.style.top = '85%';
+        scissorsCenter.style.opacity = '0';
+
+        setTimeout(() => {
+          scissorsCenter.remove();
+          tray.style.display = 'flex';
+          tray.innerHTML = '';
+
+          const scissorItem = document.createElement('div');
+          scissorItem.className = 'inv-item';
+          scissorItem.id = 'inv-scissors';
+          scissorItem.innerHTML = `<img src="${getAsset('seviye_2/kurtarma_makas.png')}" alt="Makas"><span class="inv-item-label">Kurtarma Makası</span>`;
+
+          scissorItem.onclick = () => {
+            this.sound.playSfx('click');
+            scissorItem.classList.add('selected');
+            this.selectedTool = 'scissors';
+            this.setPuki('normal', 'Makas hazır! Şimdi kaplumbağanın üzerine tıklayarak onu kurtar!');
+          };
+
+          tray.appendChild(scissorItem);
+          this.setPuki('fear', 'Şimdi sağ alttaki makasa tıkla ve kaplumbağaya dokunarak onu kurtar!');
+
+          turtleWrap.onclick = () => {
+            if (this.selectedTool === 'scissors') {
+              this.sound.playSfx('snip');
+              turtleImg.src = getAsset('seviye_2/mutlu_kaplumbaga.png');
+              if (this.fx) this.fx.spawnSparkles(turtleWrap.offsetLeft + 65, turtleWrap.offsetTop + 65, 30, '#2ecc71');
+
+              tray.style.display = 'none';
+              this.selectedTool = null;
+
+              this.setPuki('happy', 'Kaplumbağa: "Teşekkür ederim küçük kahraman! Artık masmavi denizlerde özgürce yüzebilirim! 🐢💙"');
+
+              setTimeout(() => {
+                this.showRewardModal(2);
+              }, 1800);
+            } else {
+              this.sound.playSfx('wrong');
+              this.setPuki('normal', 'Önce sağ alttaki kurtarma makasına tıklamalısın!');
+            }
+          };
+
+        }, 800);
+      }, 1000);
+    };
+  }
+
+  /* ========================================================
+     LEVEL 3: SEHRIN HAVASINI TEMIZLE
+     (Filtreler tam ekran görüntüsündeki 2 yüksek baca tepesinde)
+     ======================================================== */
+  initLevel3() {
+    this.sound.startAmbient('birds_breeze');
+    this.setStageBackground('bg_lvl3_dirty');
+    this.setPuki('sad', "Şehirdeki fabrikaların bacaları havamızı kirletiyor! Bacalara filtre takıp çatılara güneş panelleri yerleştirelim.");
+
+    const layer = document.getElementById('interactive-layer');
+    const tray = document.getElementById('inventory-tray');
+    tray.style.display = 'flex';
+    tray.innerHTML = '';
+
+    const meter = document.getElementById('pollution-meter');
+    meter.style.display = 'flex';
+    const fill = document.getElementById('pollution-fill');
+    const percent = document.getElementById('pollution-percent');
+    let pollution = 100;
+    fill.style.width = '100%';
+    percent.textContent = '%100';
+
+    const smokeList = [];
+    const smokePositions = [
+      { x: 12, y: 16 },
+      { x: 28, y: 24 },
+      { x: 44, y: 18 },
+      { x: 62, y: 22 },
+      { x: 78, y: 15 }
+    ];
+
+    smokePositions.forEach((pos, idx) => {
+      const smoke = document.createElement('img');
+      smoke.className = 'smoke-cloud';
+      smoke.src = getAsset('seviye_3/gri_duman.png');
+      smoke.style.left = `${pos.x}%`;
+      smoke.style.top = `${pos.y}%`;
+      smoke.style.width = '160px';
+      smoke.style.height = '160px';
+
+      let dir = idx % 2 === 0 ? 1 : -1;
+      setInterval(() => {
+        pos.y += dir * 0.4;
+        if (pos.y > 28 || pos.y < 12) dir *= -1;
+        smoke.style.top = `${pos.y}%`;
+      }, 100);
+
+      layer.appendChild(smoke);
+      smokeList.push(smoke);
+    });
+
+    let activeTool = null;
+    const tools = [
+      { id: 'tool-filter', type: 'filter', name: 'Baca Filtresi', img: 'seviye_3/baca_filtresi.png' },
+      { id: 'tool-solar',  type: 'solar',  name: 'Güneş Paneli', img: 'seviye_3/gunes_paneli.png' }
+    ];
+
+    const renderTools = () => {
+      tray.innerHTML = '';
+      tools.forEach(t => {
+        const item = document.createElement('div');
+        item.className = `inv-item ${activeTool === t.type ? 'selected' : ''}`;
+        item.innerHTML = `<img src="${getAsset(t.img)}" alt="${t.name}"><span class="inv-item-label">${t.name}</span>`;
+        item.onclick = () => {
+          this.sound.playSfx('click');
+          activeTool = t.type;
+          renderTools();
+          if (t.type === 'filter') {
+            this.setPuki('normal', 'Baca filtresi seçildi! Yüksek fabrika bacalarının tepesindeki belirteçlere tıkla.');
+          } else {
+            this.setPuki('normal', 'Güneş paneli seçildi! Sağdaki evlerin çatılarındaki belirteçlere tıkla.');
+          }
+        };
+        tray.appendChild(item);
+      });
+    };
+    renderTools();
+
+    // Filtreler: Kullanıcının kırmızı kalemle tam işaretlediği 2 yüksek bacanın tepesi!
+    // Sol baca tepesi: x: 10.5%, y: 11%
+    // Sağ baca tepesi: x: 24.5%, y: 11%
+    const targets = [
+      { id: 1, type: 'filter', x: 10.5, y: 11, name: 'Baca Filtresi 🏭', w: 85, h: 95, img: 'seviye_3/baca_filtresi.png' },
+      { id: 2, type: 'filter', x: 24.5, y: 11, name: 'Baca Filtresi 🏭', w: 85, h: 95, img: 'seviye_3/baca_filtresi.png' },
+      { id: 3, type: 'solar',  x: 60,   y: 48, name: 'Ev Çatısı ☀️', w: 90, h: 70, img: 'seviye_3/gunes_paneli.png' },
+      { id: 4, type: 'solar',  x: 74,   y: 52, name: 'Ev Çatısı ☀️', w: 90, h: 70, img: 'seviye_3/gunes_paneli.png' },
+      { id: 5, type: 'solar',  x: 87,   y: 44, name: 'Ev Çatısı ☀️', w: 90, h: 70, img: 'seviye_3/gunes_paneli.png' }
+    ];
+
+    let remainingTargets = targets.length;
+
+    targets.forEach(t => {
+      const spot = document.createElement('div');
+      spot.className = 'target-spot';
+      spot.style.left = `${t.x}%`;
+      spot.style.top = `${t.y}%`;
+      spot.style.width = `${t.w}px`;
+      spot.style.height = `${t.h}px`;
+      spot.innerHTML = `<span class="target-label">${t.name}</span>`;
+
+      spot.onclick = () => {
+        if (!activeTool) {
+          this.sound.playSfx('wrong');
+          this.setPuki('normal', 'Önce sağ alttan yerleştirmek istediğin eşyayı seç (Baca Filtresi veya Güneş Paneli)!');
+          return;
+        }
+
+        if (activeTool === t.type) {
+          this.sound.playSfx('correct');
+          if (this.fx) this.fx.spawnSparkles(spot.offsetLeft + t.w/2, spot.offsetTop + t.h/2, 20);
+
+          spot.remove();
+
+          const placed = document.createElement('div');
+          placed.className = 'placed-element';
+          placed.style.left = `${t.x}%`;
+          placed.style.top = `${t.y}%`;
+          placed.style.width = `${t.w}px`;
+          placed.style.height = `${t.h}px`;
+          placed.innerHTML = `<img src="${getAsset(t.img)}" alt="${t.name}">`;
+          layer.appendChild(placed);
+
+          pollution -= 20;
+          fill.style.width = `${pollution}%`;
+          percent.textContent = `%${pollution}`;
+
+          if (smokeList.length > 0) {
+            const smoke = smokeList.pop();
+            smoke.style.opacity = '0';
+            setTimeout(() => smoke.remove(), 800);
+          }
+
+          remainingTargets--;
+
+          if (t.type === 'filter') {
+            this.setPuki('happy', 'Süper! Baca filtresi dumanı engelledi, hava temizleniyor!');
+          } else {
+            this.setPuki('happy', 'Harika! Güneş paneli temiz ve yenilenebilir enerji üretiyor!');
+          }
+
+          if (remainingTargets <= 0) {
+            setTimeout(() => {
+              this.sound.playSfx('magic');
+              this.setStageBackground('bg_lvl3_clean', true);
+              meter.style.display = 'none';
+              tray.style.display = 'none';
+              this.setPuki('happy', 'Tebrikler! Şehrin havası tertemiz oldu, gökyüzü masmavi parlıyor!');
+              setTimeout(() => this.showRewardModal(3), 1200);
+            }, 600);
+          }
+        } else {
+          this.sound.playSfx('wrong');
+          if (t.type === 'filter') {
+            this.setPuki('normal', 'Burası bir fabrika bacası, buraya Baca Filtresi takmalısın!');
+          } else {
+            this.setPuki('normal', 'Burası ev çatısı, temiz enerji için Güneş Paneli takmalısın!');
+          }
+        }
+      };
+
+      layer.appendChild(spot);
+    });
+  }
+
+  /* ========================================================
+     LEVEL 4: ORMAN YANGININI SONDUR VE YESERT
+     (Cam çöpler en baştan itibaren yerde mevcut!)
+     ======================================================== */
+  initLevel4() {
+    this.sound.startAmbient('fire');
+    this.setStageBackground('bg_lvl4_fire');
+    this.setPuki('fear', "Eyvah! Ormanımız alevler içinde yanıyor! Hemen sağ alttaki yangın söndürme tüpüyle yangını söndürmeliyiz!");
+
+    const layer = document.getElementById('interactive-layer');
+    const tray = document.getElementById('inventory-tray');
+    tray.style.display = 'flex';
+    tray.innerHTML = '';
+
+    let firesExtinguished = false;
+
+    // 1) Cam Çöpler: Yangınla birlikte en baştan itibaren yerde bulunuyor!
+    const glassTrash = [
+      { id: 1, name: 'Cam Şişe', img: 'seviye_4/cam_sise_cop.png', x: 26, y: 80, w: 70, h: 70 },
+      { id: 2, name: 'Kırık Cam', img: 'seviye_4/cam_girik_cop.png', x: 42, y: 84, w: 75, h: 75 },
+      { id: 3, name: 'Kırık Şişe', img: 'seviye_4/cam_kirik_sise_cop.png', x: 58, y: 78, w: 75, h: 75 },
+      { id: 4, name: 'Cam Şişe', img: 'seviye_4/cam_sise_cop.png', x: 74, y: 82, w: 70, h: 70 }
+    ];
+
+    let remainingGlass = glassTrash.length;
+
+    glassTrash.forEach(g => {
+      const item = document.createElement('div');
+      item.className = 'game-item';
+      item.id = `glass-trash-${g.id}`;
+      item.style.left = `${g.x}%`;
+      item.style.top = `${g.y}%`;
+      item.style.width = `${g.w}px`;
+      item.style.height = `${g.h}px`;
+      item.innerHTML = `<img src="${getAsset(g.img)}" alt="${g.name}">`;
+
+      item.onclick = () => {
+        if (!firesExtinguished) {
+          this.sound.playSfx('wrong');
+          this.setPuki('fear', "Önce yangını söndürmeliyiz, alevler çok tehlikeli! Sağ alttaki yangın söndürme tüpünü kullan!");
+          return;
+        }
+
+        this.sound.playSfx('bubble');
+        if (this.fx) this.fx.spawnSparkles(item.offsetLeft + 35, item.offsetTop + 35, 15);
+
+        item.style.transition = 'all 0.3s ease';
+        item.style.transform = 'scale(0.1) rotate(180deg)';
+        item.style.opacity = '0';
+        setTimeout(() => item.remove(), 300);
+
+        remainingGlass--;
+        this.setPuki('normal', `Harika! ${g.name} toplandı. Kalan cam atık: ${remainingGlass}`);
+
+        if (remainingGlass <= 0) {
+          setTimeout(() => startReplantingPhase(), 600);
+        }
+      };
+
+      layer.appendChild(item);
+    });
+
+    // 2) Yangın Söndürme Tüpü & Alevler
+    let extinguisherActive = false;
+    const extItem = document.createElement('div');
+    extItem.className = 'inv-item';
+    extItem.id = 'inv-extinguisher';
+    extItem.innerHTML = `<img src="${getAsset('seviye_4/yangin_sondurme_tupu.png')}" alt="Yangın Söndürücü"><span class="inv-item-label">Söndürme Tüpü</span>`;
+    extItem.onclick = () => {
+      this.sound.playSfx('click');
+      extItem.classList.add('selected');
+      extinguisherActive = true;
+      this.setPuki('normal', 'Yangın söndürme tüpü hazır! Şimdi ağaçlardaki alevlere tıklayarak onları söndür!');
+    };
+    tray.appendChild(extItem);
+
+    const fires = [
+      { id: 1, img: 'seviye_4/big_fire.png', x: 22, y: 30, w: 110, h: 110 },
+      { id: 2, img: 'seviye_4/medium_fire.png', x: 38, y: 38, w: 90, h: 90 },
+      { id: 3, img: 'seviye_4/small_fire.png', x: 50, y: 32, w: 75, h: 75 },
+      { id: 4, img: 'seviye_4/big_fire.png', x: 66, y: 28, w: 110, h: 110 },
+      { id: 5, img: 'seviye_4/medium_fire.png', x: 80, y: 36, w: 90, h: 90 }
+    ];
+
+    let remainingFires = fires.length;
+
+    fires.forEach(f => {
+      const fireEl = document.createElement('img');
+      fireEl.className = 'fire-sprite';
+      fireEl.src = getAsset(f.img);
+      fireEl.style.left = `${f.x}%`;
+      fireEl.style.top = `${f.y}%`;
+      fireEl.style.width = `${f.w}px`;
+      fireEl.style.height = `${f.h}px`;
+
+      fireEl.onclick = () => {
+        if (!extinguisherActive) {
+          this.sound.playSfx('wrong');
+          this.setPuki('normal', 'Önce sağ alttaki yangın söndürme tüpüne tıkla!');
+          return;
+        }
+
+        this.sound.playSfx('spray');
+        if (this.fx) this.fx.spawnFoam(fireEl.offsetLeft + f.w/2, fireEl.offsetTop + f.h/2, 25);
+
+        fireEl.style.transition = 'all 0.3s ease';
+        fireEl.style.transform = 'scale(0.1)';
+        fireEl.style.opacity = '0';
+        setTimeout(() => fireEl.remove(), 300);
+
+        remainingFires--;
+
+        if (remainingFires <= 0) {
+          setTimeout(() => onFiresOut(), 600);
+        }
+      };
+
+      layer.appendChild(fireEl);
+    });
+
+    const onFiresOut = () => {
+      firesExtinguished = true;
+      this.sound.stopAmbient();
+      this.sound.playSfx('correct');
+      tray.style.display = 'none';
+      extinguisherActive = false;
+
+      this.setStageBackground('bg_lvl4_burned', true);
+      this.setPuki('sad', "Yangını söndürdük ama yere atılan cam şişeler büyüteç gibi güneşi odaklayıp yangına sebep oldu! Şimdi yerdeki cam atıkları toplayalım.");
+    };
+
+    const startReplantingPhase = () => {
+      this.sound.playSfx('magic');
+      this.setPuki('happy', "Ormanımızı yeniden yeşertme zamanı! Şimdi fidanları dikelim!");
+
+      const saplingCenter = document.createElement('div');
+      saplingCenter.className = 'placed-element';
+      saplingCenter.style.left = '45%';
+      saplingCenter.style.top = '35%';
+      saplingCenter.style.width = '140px';
+      saplingCenter.style.height = '140px';
+      saplingCenter.style.zIndex = '50';
+      saplingCenter.innerHTML = `<img src="${getAsset('seviye_4/kucuk_fidan.png')}" alt="Fidan">`;
+      layer.appendChild(saplingCenter);
+
+      setTimeout(() => {
+        saplingCenter.style.transition = 'all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+        saplingCenter.style.transform = 'scale(0.5)';
+        saplingCenter.style.left = '85%';
+        saplingCenter.style.top = '85%';
+        saplingCenter.style.opacity = '0';
+
+        setTimeout(() => {
+          saplingCenter.remove();
+          tray.style.display = 'flex';
+          tray.innerHTML = '';
+
+          let saplingActive = false;
+          const saplingItem = document.createElement('div');
+          saplingItem.className = 'inv-item';
+          saplingItem.innerHTML = `<img src="${getAsset('seviye_4/kucuk_fidan.png')}" alt="Fidan"><span class="inv-item-label">Küçük Fidan</span>`;
+          saplingItem.onclick = () => {
+            this.sound.playSfx('click');
+            saplingItem.classList.add('selected');
+            saplingActive = true;
+            this.setPuki('normal', 'Fidan hazır! Yerdeki belirteçlere tıklayarak fidanları dik!');
+          };
+          tray.appendChild(saplingItem);
+
+          const plantingSpots = [
+            { id: 1, x: 22, y: 74 },
+            { id: 2, x: 40, y: 72 },
+            { id: 3, x: 60, y: 75 },
+            { id: 4, x: 78, y: 72 }
+          ];
+
+          let remainingSpots = plantingSpots.length;
+
+          plantingSpots.forEach(s => {
+            const spot = document.createElement('div');
+            spot.className = 'target-spot';
+            spot.style.left = `${s.x}%`;
+            spot.style.top = `${s.y}%`;
+            spot.style.width = '80px';
+            spot.style.height = '80px';
+            spot.innerHTML = '<span class="target-label">Fidan Dik 🌱</span>';
+
+            spot.onclick = () => {
+              if (!saplingActive) {
+                this.sound.playSfx('wrong');
+                this.setPuki('normal', 'Önce sağ alttaki küçük fidana tıkla!');
+                return;
+              }
+
+              this.sound.playSfx('plant');
+              if (this.fx) this.fx.spawnSparkles(spot.offsetLeft + 40, spot.offsetTop + 40, 20, '#2ecc71');
+              spot.remove();
+
+              const plantedSapling = document.createElement('div');
+              plantedSapling.className = 'placed-element';
+              plantedSapling.style.left = `${s.x}%`;
+              plantedSapling.style.top = `${s.y}%`;
+              plantedSapling.style.width = '80px';
+              plantedSapling.style.height = '80px';
+              plantedSapling.innerHTML = `<img src="${getAsset('seviye_4/kucuk_fidan.png')}" alt="Fidan">`;
+              layer.appendChild(plantedSapling);
+
+              remainingSpots--;
+
+              if (remainingSpots <= 0) {
+                tray.style.display = 'none';
+                setTimeout(() => startRainCloudPhase(), 600);
+              }
+            };
+
+            layer.appendChild(spot);
+          });
+
+        }, 800);
+      }, 1000);
+    };
+
+    const startRainCloudPhase = () => {
+      this.sound.playSfx('magic');
+      this.setPuki('happy', "Bak, gökyüzünde bir yağmur bulutu belirdi! Bulutun üzerine tıkla ve ormanımıza can suyu yağdır!");
+
+      const cloud = document.createElement('img');
+      cloud.className = 'rain-cloud-sprite';
+      cloud.src = getAsset('seviye_4/yagmur_bulut.png');
+      cloud.style.left = '85%';
+      cloud.style.top = '10%';
+      cloud.style.width = '180px';
+      cloud.style.height = '120px';
+      layer.appendChild(cloud);
+
+      setTimeout(() => {
+        cloud.style.left = '45%';
+        cloud.style.top = '14%';
+      }, 50);
+
+      cloud.onclick = () => {
+        cloud.onclick = null;
+        this.sound.playSfx('thunder');
+        this.sound.startAmbient('rain');
+        if (this.fx) this.fx.startRain();
+
+        this.setPuki('happy', "Yağmur yağıyor! Toprak canlanıyor ve ormanımız yeniden yemyeşil oluyor!");
+
+        setTimeout(() => {
+          this.sound.playSfx('magic');
+          this.setStageBackground('bg_lvl4_normal', true);
+
+          setTimeout(() => {
+            if (this.fx) this.fx.stopRain();
+            cloud.style.transition = 'all 1s ease';
+            cloud.style.opacity = '0';
+            setTimeout(() => cloud.remove(), 1000);
+
+            this.setPuki('happy', "Tebrikler kahraman! Ormanımız küllerinden yeniden doğdu!");
+            setTimeout(() => this.showRewardModal(4), 1400);
+          }, 2500);
+        }, 1200);
+      };
+    };
+  }
+}
+
+let game = null;
+window.addEventListener('DOMContentLoaded', () => {
+  game = new GameController();
+});
+
+  </script>
+</body>
+</html>
