@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Doğa Kahramanları & Sosyal Farkındalık Platformu</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary: #2ecc71;
+      --primary-dark: #27ae60;
+      --ocean-blue: #3498db;
+      --ocean-dark: #2980b9;
+      --sun-yellow: #f1c40f;
+      --accent-orange: #e67e22;
+      --bg-light: #f4f9f4;
+      --card-bg: #ffffff;
+      --text-main: #2c3e50;
+      --text-muted: #7f8c8d;
+      --border-color: #e2ece9;
+      --sidebar-width: 260px;
+      --right-panel-width: 320px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Fredoka', 'Quicksand', sans-serif;
+      background-color: var(--bg-light);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* TOP BAR */
+    .top-navbar {
+      height: 70px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 2px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 25px;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+    }
+
+    .brand-box {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--text-main);
+    }
+
+    .brand-logo-img {
+      width: 48px;
+      height: 48px;
+      object-fit: contain;
+      filter: drop-shadow(0 3px 6px rgba(46, 204, 113, 0.3));
+    }
+
+    .brand-title {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+      letter-spacing: -0.5px;
+    }
+
+    .brand-subtitle {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    /* Right Widget: Digital Clock & Date */
+    .header-widgets {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .clock-badge {
+      background: linear-gradient(135deg, #e8f8f2, #d5f2e6);
+      border: 2px solid #b7e8d5;
+      padding: 6px 16px;
+      border-radius: 50px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      color: var(--primary-dark);
+      box-shadow: 0 2px 8px rgba(46, 204, 113, 0.15);
+    }
+
+    .digital-clock {
+      font-size: 1.15rem;
+      font-variant-numeric: tabular-nums;
+      color: #1b3a4b;
+    }
+
+    .calendar-date {
+      font-size: 0.85rem;
+      color: #2e6f40;
+    }
+
+    /* APP LAYOUT: 3 COLUMNS */
+    .app-layout {
+      display: flex;
+      flex: 1;
+      max-width: 1600px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 20px 25px;
+      gap: 25px;
+    }
+
+    /* LEFT SIDEBAR */
+    .sidebar {
+      width: var(--sidebar-width);
+      flex-shrink: 0;
+      background: var(--card-bg);
+      border-radius: 24px;
+      padding: 24px 16px;
+      border: 2px solid var(--border-color);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      height: fit-content;
+      position: sticky;
+      top: 90px;
+    }
+
+    .nav-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 12px 18px;
+      border-radius: 16px;
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: #576574;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .nav-item:hover {
+      background: #f0fbf5;
+      color: var(--primary-dark);
+      transform: translateX(4px);
+    }
+
+    .nav-item.active {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: #fff;
+      box-shadow: 0 6px 18px rgba(46, 204, 113, 0.35);
+      transform: translateX(4px);
+    }
+
+    .nav-icon {
+      font-size: 1.3rem;
+    }
+
+    /* XP Progress Box */
+    .hero-level-box {
+      background: linear-gradient(135deg, #fef9e7, #fcf3cf);
+      border: 2px solid #f9e79f;
+      border-radius: 18px;
+      padding: 16px;
+      margin-top: auto;
+    }
+
+    .hero-level-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #7d6608;
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .xp-bar-bg {
+      height: 10px;
+      background: #f7dc6f;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .xp-bar-fill {
+      width: 75%;
+      height: 100%;
+      background: linear-gradient(90deg, #f39c12, #e67e22);
+      border-radius: 10px;
+      transition: width 0.5s ease;
+    }
+
+    /* CENTER CONTENT */
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+      min-width: 0;
+    }
+
+    .view-panel {
+      display: none;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .view-panel.active {
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+    }
+
+    /* RIGHT PANEL */
+    .right-panel {
+      width: var(--right-panel-width);
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* UNIVERSAL CARDS */
+    .card {
+      background: var(--card-bg);
+      border-radius: 24px;
+      padding: 24px;
+      border: 2px solid var(--border-color);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+    }
+
+    /* HERO BANNER */
+    .hero-banner {
+      background: linear-gradient(135deg, #1e7e4a 0%, #2ecc71 100%);
+      border-radius: 28px;
+      padding: 35px 40px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      box-shadow: 0 15px 35px rgba(46, 204, 113, 0.25);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-banner::after {
+      content: '';
+      position: absolute;
+      right: -50px;
+      bottom: -50px;
+      width: 250px;
+      height: 250px;
+      background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+
+    .hero-text h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 12px;
+      text-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
+
+    .hero-text p {
+      font-size: 1.15rem;
+      opacity: 0.95;
+      margin-bottom: 22px;
+      max-width: 520px;
+    }
+
+    .btn {
+      cursor: pointer;
+      border: none;
+      outline: none;
+      font-family: inherit;
+      font-weight: 700;
+      border-radius: 50px;
+      padding: 12px 28px;
+      font-size: 1.05rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      text-decoration: none;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.12);
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.18);
+    }
+
+    .btn-yellow {
+      background: linear-gradient(135deg, #f1c40f, #f39c12);
+      color: #2c3e50;
+    }
+
+    .btn-green {
+      background: linear-gradient(135deg, #2ecc71, #27ae60);
+      color: #fff;
+    }
+
+    .btn-blue {
+      background: linear-gradient(135deg, #3498db, #2980b9);
+      color: #fff;
+    }
+
+    /* STATS COUNTERS */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .stat-card {
+      background: #fff;
+      border: 2px solid var(--border-color);
+      border-radius: 20px;
+      padding: 20px 16px;
+      text-align: center;
+      transition: all 0.25s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--primary);
+    }
+
+    .stat-icon {
+      font-size: 2.2rem;
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    /* AWARENESS CARDS GRID */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .awareness-card {
+      background: #fff;
+      border-radius: 22px;
+      border: 2px solid var(--border-color);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.3s ease;
+    }
+
+    .awareness-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+      border-color: var(--primary);
+    }
+
+    .awareness-header {
+      height: 140px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 4rem;
+    }
+
+    .bg-green-grad { background: linear-gradient(135deg, #d4efdf, #a9dfbf); }
+    .bg-blue-grad  { background: linear-gradient(135deg, #d6eaf8, #aed6f1); }
+    .bg-orange-grad{ background: linear-gradient(135deg, #fdebd0, #f5cba7); }
+
+    .awareness-body {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .awareness-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--text-main);
+    }
+
+    .awareness-desc {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin-bottom: 16px;
+      flex: 1;
+    }
+
+    /* QUOTES PANEL */
+    .quote-box {
+      background: linear-gradient(135deg, #ffffff 0%, #f9fbf9 100%);
+      border: 2px solid #d5e8db;
+      border-radius: 24px;
+      padding: 24px;
+      position: relative;
+    }
+
+    .quote-badge-tag {
+      background: #27ae60;
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 20px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+
+    .quote-text {
+      font-size: 1.05rem;
+      font-style: italic;
+      color: #2c3e50;
+      line-height: 1.6;
+      margin-bottom: 14px;
+      min-height: 70px;
+    }
+
+    .quote-author {
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: #27ae60;
+      text-align: right;
+      margin-bottom: 16px;
+    }
+
+    /* DAILY ECO CHALLENGE */
+    .challenge-box {
+      background: linear-gradient(135deg, #e8f4f8, #d4e6f1);
+      border: 2px solid #a9cce3;
+      border-radius: 24px;
+      padding: 22px;
+    }
+
+    .challenge-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #2471a3;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .challenge-text {
+      font-size: 0.95rem;
+      color: #2c3e50;
+      line-height: 1.45;
+      margin-bottom: 15px;
+    }
+
+    /* RECYCLE GUIDE (INFO VIEW) */
+    .recycle-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 15px;
+    }
+
+    .bin-card {
+      border-radius: 20px;
+      padding: 18px 14px;
+      text-align: center;
+      color: #fff;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+    }
+
+    .bin-card.organic { background: linear-gradient(135deg, #27ae60, #2ecc71); }
+    .bin-card.paper   { background: linear-gradient(135deg, #2980b9, #3498db); }
+    .bin-card.plastic { background: linear-gradient(135deg, #f39c12, #f1c40f); color: #2c3e50; }
+    .bin-card.glass   { background: linear-gradient(135deg, #16a085, #1abc9c); }
+    .bin-card.metal   { background: linear-gradient(135deg, #7f8c8d, #95a5a6); }
+
+    .bin-title { font-size: 1.1rem; font-weight: 800; margin-bottom: 8px; }
+    .bin-items { font-size: 0.82rem; line-height: 1.4; opacity: 0.92; }
+
+    /* QUIZ COMPONENT */
+    .quiz-card {
+      background: #fff;
+      border: 2px solid var(--border-color);
+      border-radius: 24px;
+      padding: 28px;
+    }
+
+    .quiz-question {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: #1b3a4b;
+    }
+
+    .quiz-options {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .quiz-opt-btn {
+      background: #f8faf9;
+      border: 2px solid #e2ece9;
+      padding: 14px 18px;
+      border-radius: 16px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s ease;
+    }
+
+    .quiz-opt-btn:hover {
+      background: #eafaf1;
+      border-color: var(--primary);
+    }
+
+    .quiz-opt-btn.correct {
+      background: #d4efdf !important;
+      border-color: #27ae60 !important;
+      color: #1e8449;
+    }
+
+    .quiz-opt-btn.wrong {
+      background: #fadbd8 !important;
+      border-color: #e74c3c !important;
+      color: #c0392b;
+    }
+
+    /* FOOTER */
+    .footer {
+      background: #1b3a4b;
+      color: #ecf0f1;
+      padding: 25px;
+      text-align: center;
+      margin-top: auto;
+      font-size: 0.95rem;
+    }
+
+    .footer a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    /* MODAL */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: #fff;
+      border-radius: 28px;
+      padding: 30px;
+      max-width: 500px;
+      width: 90%;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+      position: relative;
+      animation: popIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes popIn {
+      from { transform: scale(0.85); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    @media (max-width: 1100px) {
+      .right-panel { display: none; }
+      .stats-row { grid-template-columns: repeat(2, 1fr); }
+      .cards-grid { grid-template-columns: 1fr; }
+      .recycle-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 768px) {
+      .app-layout { flex-direction: column; padding: 15px; }
+      .sidebar { width: 100%; position: static; }
+      .nav-list { flex-direction: row; flex-wrap: wrap; }
+      .nav-item { padding: 8px 12px; font-size: 0.9rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOP NAVBAR -->
+  <header class="top-navbar">
+    <a href="#" class="brand-box" onclick="switchTab('home')">
+      <img src="maskot/baykus_normal.png" alt="Puki Logo" class="brand-logo-img">
+      <div>
+        <div class="brand-title">DOĞA KAHRAMANLARI</div>
+        <div class="brand-subtitle">🌍 Sosyal Farkındalık & Çevre Platformu</div>
+      </div>
+    </a>
+
+    <!-- Right Widget: Clock & Date -->
+    <div class="header-widgets">
+      <div class="clock-badge">
+        <span style="font-size: 1.2rem;">⏰</span>
+        <div>
+          <div id="live-clock" class="digital-clock">--:--:--</div>
+          <div id="live-date" class="calendar-date">Yükleniyor...</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- APP BODY LAYOUT -->
+  <div class="app-layout">
+    
+    <!-- LEFT SIDEBAR -->
+    <aside class="sidebar">
+      <ul class="nav-list">
+        <li><a class="nav-item active" onclick="switchTab('home')"><span class="nav-icon">🏠</span> Ana Sayfa</a></li>
+        <li><a class="nav-item" onclick="switchTab('projects')"><span class="nav-icon">🌱</span> Projelerimiz</a></li>
+        <li><a class="nav-item" onclick="switchTab('info')"><span class="nav-icon">📚</span> Bilgilendirme</a></li>
+        <li><a class="nav-item" onclick="switchTab('events')"><span class="nav-icon">📅</span> Etkinlikler</a></li>
+        <li><a class="nav-item" onclick="switchTab('games')" style="color: #27ae60; font-weight: 800;"><span class="nav-icon">🎮</span> Eğitsel Oyunlar</a></li>
+        <li><a class="nav-item" onclick="switchTab('contact')"><span class="nav-icon">✉️</span> İletişim</a></li>
+      </ul>
+
+      <!-- XP & Level Badge -->
+      <div class="hero-level-box">
+        <div class="hero-level-title">
+          <span>🦉 Puki Seviyesi</span>
+          <span id="xp-text">750 / 1000 XP</span>
+        </div>
+        <div class="xp-bar-bg">
+          <div class="xp-bar-fill" id="xp-fill"></div>
+        </div>
+        <div style="font-size: 0.8rem; color: #7d6608; margin-top: 6px; font-weight: 600;">
+          Rütbe: ⭐ Eko-Muhafız
+        </div>
+      </div>
+    </aside>
+
+    <!-- CENTER MAIN CONTENT -->
+    <main class="main-content">
+
+      <!-- 1. ANA SAYFA VIEW -->
+      <section id="view-home" class="view-panel active">
+        <div class="hero-banner">
+          <div class="hero-text">
+            <h1>Geleceğe Nefes Ol, Dünyayı Birlikte İyileştirelim!</h1>
+            <p>Küçük bir adım, büyük bir gelecektir. Sen de doğa koruyucusu ol, eğitsel oyunumuzla doğayı kurtarmayı öğren!</p>
+            <button class="btn btn-yellow" onclick="switchTab('games')">
+              🎮 Puki ile Oyuna Başla!
+            </button>
+          </div>
+          <img src="maskot/baykus_happy.png" alt="Puki" style="width: 170px; height: 170px; object-fit: contain; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.2));">
+        </div>
+
+        <!-- SayaÃ§lar -->
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-icon">♻️</div>
+            <div class="stat-value">2.450 <span style="font-size: 1rem;">kg</span></div>
+            <div class="stat-label">Ayrıştırılan Atık</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">🌲</div>
+            <div class="stat-value">1.280</div>
+            <div class="stat-label">Toprakla Buluşan Fidan</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">🐢</div>
+            <div class="stat-value">64</div>
+            <div class="stat-label">Kurtarılan Deniz Dostu</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">☀️</div>
+            <div class="stat-value">%100</div>
+            <div class="stat-label">Temiz Enerji Hedefi</div>
+          </div>
+        </div>
+
+        <!-- 3 FarkÄ±ndalÄ±k KartÄ± -->
+        <div class="cards-grid">
+          <div class="awareness-card">
+            <div class="awareness-header bg-green-grad">🌱</div>
+            <div class="awareness-body">
+              <h3 class="awareness-title">Sıfır Atık Hareketi</h3>
+              <p class="awareness-desc">Tüketim alışkanlıklarımızı değiştirerek çöpleri değil, geleceği dönüştürüyoruz. Kompost ve geri dönüşümle toprağı besleyin.</p>
+              <button class="btn btn-green" onclick="switchTab('info')">Rehberi İncele ➔</button>
+            </div>
+          </div>
+
+          <div class="awareness-card">
+            <div class="awareness-header bg-blue-grad">🌊</div>
+            <div class="awareness-body">
+              <h3 class="awareness-title">Mavi Okyanuslar</h3>
+              <p class="awareness-desc">Denizlere ulaşan plastik poşet ve bardaklar deniz kaplumbağalarını tehdit ediyor. Kıyılarımızı birlikte koruyoruz.</p>
+              <button class="btn btn-blue" onclick="switchTab('projects')">Projeler ➔</button>
+            </div>
+          </div>
+
+          <div class="awareness-card">
+            <div class="awareness-header bg-orange-grad">🌤️</div>
+            <div class="awareness-body">
+              <h3 class="awareness-title">Temiz Hava & Güneş</h3>
+              <p class="awareness-desc">Fabrika bacalarına filtre takarak ve evlerimizde güneş panelleri kullanarak karbon ayak izimizi sıfıra indirebiliriz.</p>
+              <button class="btn btn-yellow" onclick="switchTab('games')">Oyunda Keşfet ➔</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. PROJELERÄ°MÄ°Z VIEW -->
+      <section id="view-projects" class="view-panel">
+        <div class="card">
+          <h2 style="font-size: 1.8rem; color: #1b3a4b; margin-bottom: 8px;">🌱 Aktif Sürdürülebilirlik Projelerimiz</h2>
+          <p style="color: var(--text-muted); margin-bottom: 25px;">Gönüllü ekiplerimizle gerçekleştirdiğimiz sosyal sorumluluk girişimleri.</p>
+
+          <div style="display: flex; flex-direction: column; gap: 20px;">
+            <div style="background: #f8faf9; padding: 20px; border-radius: 18px; border: 2px solid #e2ece9;">
+              <div style="display: flex; justify-content: space-between; font-weight: 700; margin-bottom: 8px;">
+                <span>🌲 Yanan Ormanları Yeşertme Seferberliği</span>
+                <span style="color: #27ae60;">%85 Tamamlandı</span>
+              </div>
+              <div class="xp-bar-bg"><div class="xp-bar-fill" style="width: 85%;"></div></div>
+            </div>
+
+            <div style="background: #f8faf9; padding: 20px; border-radius: 18px; border: 2px solid #e2ece9;">
+              <div style="display: flex; justify-content: space-between; font-weight: 700; margin-bottom: 8px;">
+                <span>🌊 Kıyı & Deniz Canlıları Koruma Timi</span>
+                <span style="color: #2980b9;">%70 Tamamlandı</span>
+              </div>
+              <div class="xp-bar-bg"><div class="xp-bar-fill" style="width: 70%; background: linear-gradient(90deg, #3498db, #2980b9);"></div></div>
+            </div>
+
+            <div style="background: #f8faf9; padding: 20px; border-radius: 18px; border: 2px solid #e2ece9;">
+              <div style="display: flex; justify-content: space-between; font-weight: 700; margin-bottom: 8px;">
+                <span>☀️ Okullarda Güneş Enerjisi & Temiz Hava</span>
+                <span style="color: #e67e22;">%92 Tamamlandı</span>
+              </div>
+              <div class="xp-bar-bg"><div class="xp-bar-fill" style="width: 92%; background: linear-gradient(90deg, #f1c40f, #e67e22);"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mini Hesaplama AracÄ± -->
+        <div class="card" style="background: linear-gradient(135deg, #f4fbf7, #e8f8f0); border-color: #b7e8d5;">
+          <h3 style="font-size: 1.4rem; color: #1e8449; margin-bottom: 12px;">🧮 Kendi Ekolojik Ayak İzini Hesapla</h3>
+          <p style="color: var(--text-muted); margin-bottom: 18px;">Haftalık tek kullanımlık plastik şişe tüketimini seç:</p>
+          <input type="range" id="plastic-slider" min="0" max="25" value="5" style="width: 100%; accent-color: #2ecc71; margin-bottom: 15px;" oninput="calcFootprint(this.value)">
+          <div style="font-size: 1.15rem; font-weight: 700; color: #1b3a4b;" id="footprint-result">
+            Haftada 5 adet plastik şişe = Yılda 260 plastik atık! Bir matara edinerek doğayı kurtarabilirsin! 🌱
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. BÄ°LGÄ°LENDÄ°RME (EKO-REHBER) VIEW -->
+      <section id="view-info" class="view-panel">
+        <div class="card">
+          <h2 style="font-size: 1.8rem; color: #1b3a4b; margin-bottom: 8px;">📚 5 Atık Türü Ayrıştırma Rehberi</h2>
+          <p style="color: var(--text-muted); margin-bottom: 25px;">Doğru atığı doğru kutuya atarak döngüsel ekonomiye can verin.</p>
+          
+          <div class="recycle-grid">
+            <div class="bin-card organic">
+              <div style="font-size: 2.2rem; margin-bottom: 6px;">🍎</div>
+              <div class="bin-title">Organik</div>
+              <div class="bin-items">Elma, muz kabuğu, çay posası, yemek artıkları.</div>
+            </div>
+            <div class="bin-card paper">
+              <div style="font-size: 2.2rem; margin-bottom: 6px;">📰</div>
+              <div class="bin-title">Kağıt</div>
+              <div class="bin-items">Gazete, dergi, karton kutular, defterler.</div>
+            </div>
+            <div class="bin-card plastic">
+              <div style="font-size: 2.2rem; margin-bottom: 6px;">🥤</div>
+              <div class="bin-title">Plastik</div>
+              <div class="bin-items">Su şişeleri, deterjan kutuları, poşetler.</div>
+            </div>
+            <div class="bin-card glass">
+              <div style="font-size: 2.2rem; margin-bottom: 6px;">🫙</div>
+              <div class="bin-title">Cam</div>
+              <div class="bin-items">Kavanozlar, cam şişeler, içecek şişeleri.</div>
+            </div>
+            <div class="bin-card metal">
+              <div style="font-size: 2.2rem; margin-bottom: 6px;">🥫</div>
+              <div class="bin-title">Metal</div>
+              <div class="bin-items">Konserve kutuları, meşrubat kutuları.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4 Soruluk Ä°nteraktif Quiz -->
+        <div class="quiz-card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <span style="font-size: 0.9rem; font-weight: 700; color: #27ae60; background: #eafaf1; padding: 4px 12px; border-radius: 20px;">🎯 Çevre Kahramanı Testi</span>
+            <span id="quiz-score" style="font-weight: 800; color: #1b3a4b;">Puan: 0</span>
+          </div>
+          <div id="quiz-question" class="quiz-question">Muz kabuğu ve elma çöpü hangi tür atıktır?</div>
+          <div id="quiz-options" class="quiz-options"></div>
+          <div id="quiz-feedback" style="font-weight: 700; min-height: 24px;"></div>
+        </div>
+      </section>
+
+      <!-- 4. ETKÄ°NLÄ°KLER VIEW -->
+      <section id="view-events" class="view-panel">
+        <div class="card">
+          <h2 style="font-size: 1.8rem; color: #1b3a4b; margin-bottom: 8px;">📅 Doğa Etkinlikleri Takvimi</h2>
+          <p style="color: var(--text-muted); margin-bottom: 25px;">Sen de aileni ve arkadaşlarını al, etkinliklerimize katıl!</p>
+
+          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+            <div style="background: #fdfefe; border: 2px solid var(--border-color); border-radius: 20px; padding: 22px;">
+              <span style="background: #e8f8f5; color: #16a085; font-weight: 800; padding: 4px 10px; border-radius: 12px; font-size: 0.8rem;">15 Kasım Cumartesi</span>
+              <h3 style="font-size: 1.3rem; margin: 10px 0 6px 0; color: #1b3a4b;">🌲 10.000 Fidan Dikim Şenliği</h3>
+              <p style="color: var(--text-muted); font-size: 0.92rem; margin-bottom: 16px;">Belgrad Ormanı'nda buluşuyor, geleceğe fidan bırakıyoruz. Servis ve fidanlar ücretsizdir.</p>
+              <button class="btn btn-green" onclick="openRegisterModal('10.000 Fidan Dikim Şenliği')">Ücretsiz Kayıt Ol</button>
+            </div>
+
+            <div style="background: #fdfefe; border: 2px solid var(--border-color); border-radius: 20px; padding: 22px;">
+              <span style="background: #ebf5fb; color: #2980b9; font-weight: 800; padding: 4px 10px; border-radius: 12px; font-size: 0.8rem;">22 Kasım Pazar</span>
+              <h3 style="font-size: 1.3rem; margin: 10px 0 6px 0; color: #1b3a4b;">🌊 Büyük Sahil Temizleme Günü</h3>
+              <p style="color: var(--text-muted); font-size: 0.92rem; margin-bottom: 16px;">Kıyılardaki plastik atıkları toplayarak kaplumbağalara temiz bir yuva bırakıyoruz.</p>
+              <button class="btn btn-blue" onclick="openRegisterModal('Büyük Sahil Temizleme Günü')">Ücretsiz Kayıt Ol</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. EÄÄ°TSEL OYUNLAR (PUKI ILE DOÄA KAHRAMANI OYUNU) VIEW -->
+      <section id="view-games" class="view-panel">
+        <div class="card" style="padding: 18px 24px; display: flex; justify-content: space-between; align-items: center; background: linear-gradient(135deg, #1b3a4b, #2e6f40); color: #fff;">
+          <div>
+            <h2 style="font-size: 1.6rem; color: #f1c40f; font-weight: 800;">🎮 Baykuş Puki ile Doğa Kurtarma Macerası</h2>
+            <p style="font-size: 0.95rem; opacity: 0.9;">Parkı temizle, denizdeki kaplumbağayı kurtar, şehri arındır ve yanan ormanı yeşert!</p>
+          </div>
+          <button class="btn btn-yellow" onclick="fullscreenGame()">
+            Tam Ekran Oyna ⛶
+          </button>
+        </div>
+
+        <!-- Embedded Standalone Interactive Game Frame -->
+        <div style="width: 100%; aspect-ratio: 16/9; max-height: 750px; background: #000; border-radius: 24px; overflow: hidden; box-shadow: 0 15px 40px rgba(0,0,0,0.25); border: 4px solid var(--primary);">
+          <iframe id="game-frame" src="oyun.html" width="100%" height="100%" style="border: none; display: block;" allow="autoplay"></iframe>
+        </div>
+      </section>
+
+      <!-- 6. Ä°LETÄ°ÅÄ°M VIEW -->
+      <section id="view-contact" class="view-panel">
+        <div class="card">
+          <h2 style="font-size: 1.8rem; color: #1b3a4b; margin-bottom: 8px;">✉️ Gönüllü Ol & Bizimle İletişime Geç</h2>
+          <p style="color: var(--text-muted); margin-bottom: 25px;">Sorularınız, önerileriniz veya okul etkinlikleriniz için bize yazabilirsiniz.</p>
+
+          <form onsubmit="handleContactSubmit(event)" style="display: flex; flex-direction: column; gap: 16px; max-width: 600px;">
+            <div>
+              <label style="font-weight: 700; display: block; margin-bottom: 6px;">Adınız Soyadınız:</label>
+              <input type="text" required placeholder="Ahmet Yılmaz" style="width: 100%; padding: 12px 16px; border-radius: 14px; border: 2px solid #e2ece9; font-family: inherit;">
+            </div>
+            <div>
+              <label style="font-weight: 700; display: block; margin-bottom: 6px;">E-Posta Adresiniz:</label>
+              <input type="email" required placeholder="ornek@mail.com" style="width: 100%; padding: 12px 16px; border-radius: 14px; border: 2px solid #e2ece9; font-family: inherit;">
+            </div>
+            <div>
+              <label style="font-weight: 700; display: block; margin-bottom: 6px;">Mesajınız:</label>
+              <textarea rows="4" required placeholder="Mesajınızı buraya yazınız..." style="width: 100%; padding: 12px 16px; border-radius: 14px; border: 2px solid #e2ece9; font-family: inherit;"></textarea>
+            </div>
+            <button type="submit" class="btn btn-green" style="align-self: flex-start;">Mesajı Gönder ✉️</button>
+            <div id="contact-success" style="color: #27ae60; font-weight: 700; display: none;">Teşekkürler! Mesajınız başarıyla alındı.</div>
+          </form>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- RIGHT PANEL: QUOTES & DAILY CHALLENGE -->
+    <aside class="right-panel">
+      
+      <!-- Ä°lham Veren SÃ¶zler -->
+      <div class="card quote-box">
+        <span class="quote-badge-tag">🌿 İlham Veren Söz</span>
+        <div id="quote-text" class="quote-text">Yükleniyor...</div>
+        <div id="quote-author" class="quote-author">-</div>
+        <button class="btn btn-green" style="width: 100%; padding: 10px; font-size: 0.95rem;" onclick="renderRandomQuote()">
+          ♻️ Yeni Söz Getir
+        </button>
+      </div>
+
+      <!-- GÃ¼nÃ¼n Eko-GÃ¶revi -->
+      <div class="challenge-box">
+        <div class="challenge-title">
+          <span>⚡ Günün Eko-Görevi</span>
+        </div>
+        <p class="challenge-text" id="daily-challenge-text">
+          Bugün tek kullanımlık plastik şişe yerine cam matara veya su matarana su doldur!
+        </p>
+        <button id="challenge-btn" class="btn btn-blue" style="width: 100%; padding: 10px; font-size: 0.92rem;" onclick="completeChallenge()">
+          Görevi Tamamladım (+50 XP) ✨
+        </button>
+      </div>
+
+      <!-- Rozet Vitrini -->
+      <div class="card" style="padding: 18px;">
+        <h4 style="font-size: 1rem; color: #1b3a4b; margin-bottom: 12px; font-weight: 700;">🏅 Doğa Rozetlerin</h4>
+        <div style="display: flex; gap: 10px; justify-content: center;">
+          <img src="seviye_1/1_seviye_odul.png" title="Park Muhafızı" style="width: 52px; height: 52px; object-fit: contain;">
+          <img src="seviye_2/2_seviye_odul.png" title="Okyanus Dostu" style="width: 52px; height: 52px; object-fit: contain;">
+          <img src="seviye_3/3_seviye_odul.png" title="Temiz Hava Elçisi" style="width: 52px; height: 52px; object-fit: contain;">
+          <img src="seviye_4/4_seviye_odul.png" title="Orman Kahramanı" style="width: 52px; height: 52px; object-fit: contain;">
+        </div>
+      </div>
+
+    </aside>
+
+  </div>
+
+  <!-- REGISTER MODAL -->
+  <div id="register-modal" class="modal-overlay">
+    <div class="modal-content">
+      <h3 id="modal-event-name" style="color: #1b3a4b; margin-bottom: 10px;">Etkinliğe Kayıt</h3>
+      <p style="color: var(--text-muted); font-size: 0.92rem; margin-bottom: 18px;">Etkinliğe ücretsiz katılım için bilgilerinizi bırakın:</p>
+      <input type="text" placeholder="Adınız Soyadınız" style="width: 100%; padding: 10px 14px; border-radius: 12px; border: 2px solid #e2ece9; margin-bottom: 12px;">
+      <input type="tel" placeholder="Telefon Numaranız" style="width: 100%; padding: 10px 14px; border-radius: 12px; border: 2px solid #e2ece9; margin-bottom: 20px;">
+      <div style="display: flex; gap: 10px;">
+        <button class="btn btn-green" style="flex: 1;" onclick="closeRegisterModal(true)">Kaydı Tamamla</button>
+        <button class="btn btn-yellow" style="flex: 1;" onclick="closeRegisterModal(false)">Vazgeç</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <p>🌍 Doğa Kahramanları Sosyal Farkındalık Projesi &bull; Geleceği Birlikte Yeşertiyoruz.</p>
+  </footer>
+
+  <script>
+    // Tab Navigation
+    function switchTab(tabId) {
+      document.querySelectorAll('.view-panel').forEach(v => v.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+      const targetView = document.getElementById('view-' + tabId);
+      if (targetView) targetView.classList.add('active');
+
+      const tabs = ['home', 'projects', 'info', 'events', 'games', 'contact'];
+      const idx = tabs.indexOf(tabId);
+      const navItems = document.querySelectorAll('.nav-item');
+      if (idx !== -1 && navItems[idx]) {
+        navItems[idx].classList.add('active');
+      }
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Live Digital Clock & Calendar
+    function updateClock() {
+      const now = new Date();
+      const clockEl = document.getElementById('live-clock');
+      const dateEl = document.getElementById('live-date');
+
+      if (clockEl) {
+        clockEl.textContent = now.toLocaleTimeString('tr-TR');
+      }
+
+      if (dateEl) {
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        dateEl.textContent = now.toLocaleDateString('tr-TR', options);
+      }
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // Quotes Generator
+    const quotes = [
+      { text: "Ormansız bir yurt, vatan değildir.", author: "Mustafa Kemal Atatürk" },
+      { text: "Türkiye çöl olmasın! Toprak yaşamın kaynağıdır.", author: "Hayrettin Karaca (Toprak Dede)" },
+      { text: "Doğayı korumak, insanın kendi geleceğini korumasıdır.", author: "Rachel Carson" },
+      { text: "Yeryüzü hepimize yeter, ama açgözlülüğümüze asla.", author: "Mahatma Gandhi" },
+      { text: "Geleceğe bırakabileceğimiz en değerli miras, temiz bir dünyadır.", author: "Sir David Attenborough" }
+    ];
+
+    function renderRandomQuote() {
+      const q = quotes[Math.floor(Math.random() * quotes.length)];
+      const textEl = document.getElementById('quote-text');
+      const authorEl = document.getElementById('quote-author');
+      textEl.style.opacity = '0';
+      setTimeout(() => {
+        textEl.textContent = '"' + q.text + '"';
+        authorEl.textContent = "- " + q.author;
+        textEl.style.opacity = '1';
+      }, 200);
+    }
+    renderRandomQuote();
+
+    // Eco Challenge
+    function completeChallenge() {
+      const btn = document.getElementById('challenge-btn');
+      btn.textContent = '✅ Harika! Görev Tamamlandı (+50 XP)';
+      btn.style.background = '#27ae60';
+      btn.disabled = true;
+
+      const xpFill = document.getElementById('xp-fill');
+      const xpText = document.getElementById('xp-text');
+      xpFill.style.width = '80%';
+      xpText.textContent = '800 / 1000 XP';
+    }
+
+    // Footprint Calculator
+    function calcFootprint(val) {
+      const annual = val * 52;
+      const resEl = document.getElementById('footprint-result');
+      if (val == 0) {
+        resEl.textContent = 'Harikasın! Hiç plastik şişe kullanmıyorsun! 🌱';
+      } else {
+        resEl.textContent = `Haftada ${val} adet şişe = Yılda ${annual} plastik atık! Bir matara edinerek doğayı koruyabilirsin.`;
+      }
+    }
+
+    // Quiz Data & Logic
+    const quizData = [
+      {
+        q: "Muz kabuğu ve elma çöpü hangi tür atıktır?",
+        opts: ["Plastik Atık", "Organik Atık", "Cam Atık", "Metal Atık"],
+        ans: 1,
+        exp: "Meyve artıkları organiktir ve kompost yapılabilir."
+      },
+      {
+        q: "Ormanlarda cam şişelerin yere atılması neden tehlikelidir?",
+        opts: ["Büyüteç gibi güneşi odaklayıp yangın çıkarır", "Suyu kirletir", "Ağaçların büyümesini durdurur", "Hava kirliliği yapar"],
+        ans: 0,
+        exp: "Cam parçaları güneş ışığını odaklayarak kuru yaprakları tutuşturur!"
+      },
+      {
+        q: "Fabrika bacalarına hangi parça takılarak hava temizlenir?",
+        opts: ["Güneş Paneli", "Baca Filtresi", "Rüzgar Gülü", "Su Sayacı"],
+        ans: 1,
+        exp: "Baca filtreleri zararlı gaz ve partikülleri tutar."
+      },
+      {
+        q: "Denizlerde plastik atıklar en çok hangi canlıları tehdit eder?",
+        opts: ["Kutup ayıları", "Deniz kaplumbağaları ve balıklar", "Kartallar", "Geyikler"],
+        ans: 1,
+        exp: "Kaplumbağalar poşetleri denizanası sanıp yutabilmektedir."
+      }
+    ];
+
+    let currentQuizIdx = 0;
+    let quizScore = 0;
+
+    function renderQuiz() {
+      const q = quizData[currentQuizIdx];
+      const qEl = document.getElementById('quiz-question');
+      const optEl = document.getElementById('quiz-options');
+      const feedEl = document.getElementById('quiz-feedback');
+
+      qEl.textContent = (currentQuizIdx + 1) + ". " + q.q;
+      optEl.innerHTML = '';
+      feedEl.textContent = '';
+
+      q.opts.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'quiz-opt-btn';
+        btn.textContent = opt;
+        btn.onclick = () => handleQuizAnswer(idx);
+        optEl.appendChild(btn);
+      });
+    }
+
+    function handleQuizAnswer(choiceIdx) {
+      const q = quizData[currentQuizIdx];
+      const btns = document.querySelectorAll('.quiz-opt-btn');
+      const feedEl = document.getElementById('quiz-feedback');
+
+      btns.forEach((b, i) => {
+        b.disabled = true;
+        if (i === q.ans) b.classList.add('correct');
+        else if (i === choiceIdx) b.classList.add('wrong');
+      });
+
+      if (choiceIdx === q.ans) {
+        quizScore += 25;
+        document.getElementById('quiz-score').textContent = 'Puan: ' + quizScore;
+        feedEl.innerHTML = '✅ <span style="color:#27ae60;">Doğru! ' + q.exp + '</span>';
+      } else {
+        feedEl.innerHTML = '❌ <span style="color:#c0392b;">Yanlış! ' + q.exp + '</span>';
+      }
+
+      setTimeout(() => {
+        currentQuizIdx = (currentQuizIdx + 1) % quizData.length;
+        renderQuiz();
+      }, 2500);
+    }
+    renderQuiz();
+
+    // Event Modal
+    function openRegisterModal(name) {
+      document.getElementById('modal-event-name').textContent = name + ' Kayıt Formu';
+      document.getElementById('register-modal').classList.add('active');
+    }
+
+    function closeRegisterModal(confirmed) {
+      document.getElementById('register-modal').classList.remove('active');
+      if (confirmed) {
+        alert('Tebrikler! Etkinlik kaydınız başarıyla alındı.');
+      }
+    }
+
+    // Contact Form
+    function handleContactSubmit(e) {
+      e.preventDefault();
+      document.getElementById('contact-success').style.display = 'block';
+      setTimeout(() => {
+        document.getElementById('contact-success').style.display = 'none';
+        e.target.reset();
+      }, 3000);
+    }
+
+    // Fullscreen game
+    function fullscreenGame() {
+      const frame = document.getElementById('game-frame');
+      if (frame.requestFullscreen) {
+        frame.requestFullscreen();
+      } else if (frame.webkitRequestFullscreen) {
+        frame.webkitRequestFullscreen();
+      }
+    }
+  </script>
+</body>
+</html>
